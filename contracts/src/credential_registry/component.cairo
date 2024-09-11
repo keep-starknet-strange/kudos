@@ -3,11 +3,13 @@ pub mod CredentialRegistryComponent {
     use core::num::traits::zero::Zero;
     use kudos::credential_registry::interface::ICredentialRegistry;
     use openzeppelin::account::interface::{AccountABIDispatcherTrait, AccountABIDispatcher};
-    use starknet::storage::Map;
+    use starknet::storage::{
+        StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map
+    };
     use starknet::{ContractAddress, contract_address_const, get_caller_address};
 
     #[storage]
-    struct Storage {
+    pub struct Storage {
         credentials: Map::<felt252, ContractAddress>,
         user_to_credentials: Map::<ContractAddress, felt252>,
         credentials_w_pin: Map::<felt252, ContractAddress>,
@@ -64,25 +66,25 @@ pub mod CredentialRegistryComponent {
         fn get_credential(
             self: @ComponentState<TContractState>, address: ContractAddress
         ) -> felt252 {
-            self.user_to_credentials.read(address)
+            self.user_to_credentials.entry(address).read()
         }
 
         fn get_credential_address(
             self: @ComponentState<TContractState>, hash: felt252
         ) -> ContractAddress {
-            self.credentials.read(hash)
+            self.credentials.entry(hash).read()
         }
 
         fn get_credential_w_pin(
             self: @ComponentState<TContractState>, address: ContractAddress
         ) -> felt252 {
-            self.user_to_credentials_w_pin.read(address)
+            self.user_to_credentials_w_pin.entry(address).read()
         }
 
         fn get_credential_address_w_pin(
             self: @ComponentState<TContractState>, hash: felt252
         ) -> ContractAddress {
-            self.credentials_w_pin.read(hash)
+            self.credentials_w_pin.entry(hash).read()
         }
 
         fn get_total_credentials(self: @ComponentState<TContractState>) -> u128 {
@@ -90,7 +92,7 @@ pub mod CredentialRegistryComponent {
         }
 
         fn is_registered(self: @ComponentState<TContractState>, address: ContractAddress) -> bool {
-            self.user_to_credentials.read(address).is_non_zero()
+            self.user_to_credentials.entry(address).read().is_non_zero()
         }
     }
 
@@ -105,7 +107,7 @@ pub mod CredentialRegistryComponent {
             signature: Array<felt252>
         ) {
             assert(
-                self.credentials.read(hash) == contract_address_const::<0>(),
+                self.credentials.entry(hash).read() == contract_address_const::<0>(),
                 CredentialRegistryErrors::CREDENTIAL_REGISTERED
             );
 
@@ -115,8 +117,8 @@ pub mod CredentialRegistryComponent {
                 CredentialRegistryErrors::INVALID_SIGNATURE
             );
 
-            self.credentials.write(hash, contract_address);
-            self.user_to_credentials.write(contract_address, hash);
+            self.credentials.entry(hash).write(contract_address);
+            self.user_to_credentials.entry(contract_address).write(hash);
         }
 
         fn _register_credential_w_pin(
@@ -126,7 +128,7 @@ pub mod CredentialRegistryComponent {
             signature: Array<felt252>
         ) {
             assert(
-                self.credentials_w_pin.read(hash) == contract_address_const::<0>(),
+                self.credentials_w_pin.entry(hash).read() == contract_address_const::<0>(),
                 CredentialRegistryErrors::CREDENTIAL_W_PIN_REGISTERED
             );
 
@@ -136,8 +138,8 @@ pub mod CredentialRegistryComponent {
                 CredentialRegistryErrors::INVALID_SIGNATURE
             );
 
-            self.credentials_w_pin.write(hash, contract_address);
-            self.user_to_credentials_w_pin.write(contract_address, hash);
+            self.credentials_w_pin.entry(hash).write(contract_address);
+            self.user_to_credentials_w_pin.entry(contract_address).write(hash);
         }
     }
 }
