@@ -1,25 +1,24 @@
-#[starknet::interface]
-pub trait IHelloStarknet<TContractState> {
-    fn increase_balance(ref self: TContractState, amount: felt252);
-    fn get_balance(self: @TContractState) -> felt252;
+mod kudos;
+
+mod credential_registry {
+    pub mod component;
+    mod interface;
+
+    pub use interface::{
+        ICredentialRegistry, ICredentialRegistryDispatcher, ICredentialRegistryDispatcherTrait
+    };
 }
 
-#[starknet::contract]
-mod HelloStarknet {
-    #[storage]
-    struct Storage {
-        balance: felt252, 
+mod tests {
+    #[cfg(test)]
+    pub(crate) mod common;
+    #[cfg(test)]
+    mod test_credential_registry;
+    mod mocks {
+        pub(crate) mod account_mock;
+        pub(crate) mod credential_registry_mock;
     }
-
-    #[abi(embed_v0)]
-    impl HelloStarknetImpl of super::IHelloStarknet<ContractState> {
-        fn increase_balance(ref self: ContractState, amount: felt252) {
-            assert(amount != 0, 'Amount cannot be 0');
-            self.balance.write(self.balance.read() + amount);
-        }
-
-        fn get_balance(self: @ContractState) -> felt252 {
-            self.balance.read()
-        }
+    pub(crate) mod utils {
+        pub(crate) mod constants;
     }
 }

@@ -1,16 +1,19 @@
 [package]
-name = "contracts"
+name = "kudos"
 version = "0.1.0"
 edition = "2023_11"
 
+[scripts]
+test = "snforge test"
+
+[tool.fmt]
+sort-module-level-items = true
+
 [dependencies]
 starknet = "2.8.2"
+openzeppelin = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", tag = "v0.16.0" }
 
 [dev-dependencies]
 snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry", tag = "v0.30.0" }
 
 [[target.starknet-contract]]
-sierra = true
-
-[scripts]
-test = "snforge test"
