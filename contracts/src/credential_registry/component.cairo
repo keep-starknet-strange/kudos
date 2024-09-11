@@ -5,6 +5,7 @@ pub mod CredentialRegistryComponent {
     use openzeppelin::account::interface::{AccountABIDispatcherTrait, AccountABIDispatcher};
     use starknet::storage::Map;
     use starknet::{ContractAddress, contract_address_const, get_caller_address};
+    use kudos::Kudos:{KudosDispatcher, IKudosDispatcherTrait};
 
     #[storage]
     struct Storage {
@@ -13,6 +14,7 @@ pub mod CredentialRegistryComponent {
         credentials_w_pin: Map::<felt252, ContractAddress>,
         user_to_credentials_w_pin: Map::<ContractAddress, felt252>,
         total_credentials: u128,
+        kudos_address: ContractAddress
     }
 
     #[event]
@@ -57,6 +59,8 @@ pub mod CredentialRegistryComponent {
             self.total_credentials.write(prev_total + 1);
 
             // TODO: mint $KUDOS here
+            let kudus = IKudosDispatcher {contract_address: self.kudos_address.read()}
+            kudos.mint(hash, signature)
 
             self.emit(CredentialsRegistered { address, hash, hash_w_pin })
         }

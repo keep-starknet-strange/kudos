@@ -1,6 +1,7 @@
 #[starknet::interface]
 pub trait IKudos<T> {
-    fn give_kudos(ref self: T) -> ();
+    fn mint(ref self: T, hash: felt252);
+    // fn give_kudos(ref self: T) -> ();
 }
 
 #[starknet::contract]
@@ -23,9 +24,9 @@ pub mod Kudos {
     #[abi(embed_v0)]
     impl ERC20MixinImpl = ERC20Component::ERC20MixinImpl<ContractState>;
     impl ERC20InternalImpl = ERC20Component::InternalImpl<ContractState>;
+    // TODO: Embed the credential registry component
     impl CredentialRegistryImpl = CredentialRegistryComponent::CredentialRegistryImpl<ContractState>;
     impl CredentialRegistryInternalImpl = CredentialRegistryComponent::InternalImpl<ContractState>;
-    // TODO: Embed the credential registry component
 
     #[storage]
     struct Storage {
@@ -43,26 +44,28 @@ pub mod Kudos {
         pub const UNREGISTERED_SENDER: felt252 = 'unregistered sender';
         pub const UNREGISTERED_RECIEVER: felt252 = 'unregistered reciever';
     }
+
+    pub const INITIAL_SUPPLY: felt252 = 100
     // TODO:
     // - Create `KudosGiven` Event and emit it
     // - Test for even submission
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
-        KudosGiven: KudosGiven,
+        // KudosGiven: KudosGiven,
         #[flat]
         OwnableEvent: OwnableComponent::Event,
         #[flat]
         ERC20Event: ERC20Component::Event,
     }
 
-    #[derive(Drop, starknet::Event)]
-    struct KudosGiven {
-        amount: felt252,
-        reciever: ByteArray,
-        sender: felt252,
-        description: ByteArray,
-    }
+    // // #[derive(Drop, starknet::Event)]
+    // struct KudosGiven {
+    //     amount: felt252,
+    //     reciever: ByteArray,
+    //     sender: felt252,
+    //     description: ByteArray,
+    // }
 
     #[constructor]
     fn constructor(
@@ -79,9 +82,12 @@ pub mod Kudos {
 
     #[starknet::interface]
     trait Kudos of IKudos<TContractState> {
-        fn give_kudos(ref self: ContractState, new_kudos: KudosGiven) {
-            new_kudos.recipient
+        fn mint(ref self: ContractState, hash: felt252>) {
+            self.erc20._mint(hash, INITIAL_SUPPLY)
         }
+        // fn give_kudos(ref self: ContractState, new_kudos: KudosGiven) {
+        //     new_kudos.recipient
+        // }
 
     }
     // TODO:
@@ -89,6 +95,6 @@ pub mod Kudos {
 // - allow the credential registry to `mint` to a recipient
 // - don't expose `transfer` only `transfer_from` and make sure only the credential registry can
 // call it - write tests to ensure this
-// lets say we have a trait congragulate that accepts a person struct and broadcast and event with that person object
+// 
 
 }
