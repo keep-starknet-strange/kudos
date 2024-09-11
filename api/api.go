@@ -1,9 +1,9 @@
 package main
 
-import (	
+import (
+	"github.com/gin-gonic/gin"
 	"github.com/keep-starknet-strange/kudos/api/internal/config"
 	"github.com/keep-starknet-strange/kudos/api/internal/handlers"
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
