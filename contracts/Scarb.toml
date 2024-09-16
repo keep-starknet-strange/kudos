@@ -11,6 +11,7 @@ sort-module-level-items = true
 
 [dependencies]
 starknet = "2.8.2"
+openzeppelin_token = "0.16.0"
 
 [dev-dependencies]
 assert_macros = "2.8.2"

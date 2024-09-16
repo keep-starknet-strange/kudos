@@ -1,3 +1,6 @@
 # `snfoundry` artifacts 
 contracts/target
 contracts/.snfoundry_cache/
+
+# mac 
+**/.DS_Store
