@@ -1,31 +1,15 @@
+use kudos::utils::constants::{NAME, SYMBOL, OWNER};
 use snforge_std::{declare, ContractClassTrait, DeclareResultTrait};
-use starknet::{ContractAddress, contract_address_const};
+use starknet::ContractAddress;
 
-pub const DECIMALS: u8 = 18;
-
-pub fn CALLER() -> ContractAddress {
-    contract_address_const::<'CALLER'>()
+pub trait SerializedAppend<T> {
+    fn append_serde(ref self: Array<felt252>, value: T);
 }
 
-pub fn RECEIVER() -> ContractAddress {
-    contract_address_const::<'RECEIVER'>()
-}
-
-pub fn SENDER() -> ContractAddress {
-    contract_address_const::<'SENDER'>()
-}
-
-pub fn OWNER() -> ContractAddress {
-    contract_address_const::<'OWNER'>()
-}
-
-pub fn NAME() -> ByteArray {
-    "Kudos"
-}
-
-
-pub fn SYMBOL() -> ByteArray {
-    "KUDOS"
+impl SerializedAppendImpl<T, impl TSerde: Serde<T>, impl TDrop: Drop<T>> of SerializedAppend<T> {
+    fn append_serde(ref self: Array<felt252>, value: T) {
+        value.serialize(ref self);
+    }
 }
 
 pub fn setup() -> ContractAddress {
@@ -43,12 +27,3 @@ pub fn declare_deploy(contract_name: ByteArray, calldata: Array<felt252>) -> Con
     contract_address
 }
 
-pub trait SerializedAppend<T> {
-    fn append_serde(ref self: Array<felt252>, value: T);
-}
-
-impl SerializedAppendImpl<T, impl TSerde: Serde<T>, impl TDrop: Drop<T>> of SerializedAppend<T> {
-    fn append_serde(ref self: Array<felt252>, value: T) {
-        value.serialize(ref self);
-    }
-}

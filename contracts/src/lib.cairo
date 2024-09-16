@@ -1,6 +1,23 @@
 mod interface;
-pub mod kudos;
+mod kudos;
 pub use interface::{IKudos, IKudosDispatcher, IKudosDispatcherTrait};
+pub use kudos::Kudos;
+
+pub mod credential_registry {
+    mod component;
+
+    mod interface;
+    pub use component::CredentialRegistryComponent;
+    pub use interface::{
+        ICredentialRegistry, ICredentialRegistryDispatcher, ICredentialRegistryDispatcherTrait
+    };
+
+    #[cfg(test)]
+    mod tests {
+        mod mock_credential_registry;
+        mod test_credential_registry;
+    }
+}
 
 pub mod oz16 {
     pub mod erc20;
@@ -13,11 +30,6 @@ pub mod oz16 {
     };
 }
 
-pub mod credential_registry {
-    pub mod component;
-
-    mod interface;
-    pub use interface::{
-        ICredentialRegistry, ICredentialRegistryDispatcher, ICredentialRegistryDispatcherTrait
-    };
+pub mod utils {
+    pub mod constants;
 }

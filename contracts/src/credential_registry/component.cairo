@@ -1,11 +1,11 @@
 #[starknet::component]
 pub mod CredentialRegistryComponent {
     use core::num::traits::zero::Zero;
-    use kudos::credential_registry::interface::ICredentialRegistry;
+    use kudos::credential_registry::ICredentialRegistry;
+    use starknet::ContractAddress;
     use starknet::storage::{
         StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map
     };
-    use starknet::{ContractAddress, contract_address_const, get_caller_address};
 
     #[storage]
     pub struct Storage {
@@ -38,16 +38,13 @@ pub mod CredentialRegistryComponent {
         TContractState, +HasComponent<TContractState>
     > of ICredentialRegistry<ComponentState<TContractState>> {
         fn register_credentials(
-            ref self: ComponentState<TContractState>, hash: felt252, signature: Array<felt252>,
+            ref self: ComponentState<TContractState>, address: ContractAddress, hash: felt252,
         ) {
-            let address = get_caller_address();
-
-            self._register_credentials(hash, address, signature);
+            self._register_credential(hash, address);
+            self._register_user(address, hash);
 
             let prev_total = self.total_credentials.read();
             self.total_credentials.write(prev_total + 1);
-
-            // TODO: mint $KUDOS here
 
             self.emit(CredentialsRegistered { address, hash })
         }
@@ -69,7 +66,9 @@ pub mod CredentialRegistryComponent {
         }
 
         fn is_registered(self: @ComponentState<TContractState>, address: ContractAddress) -> bool {
-            self.user_to_credentials.entry(address).read().is_non_zero()
+            let credential = self.user_to_credentials.entry(address).read();
+            let registered_address = self.get_credential_address(credential);
+            registered_address == address
         }
     }
 
@@ -77,19 +76,25 @@ pub mod CredentialRegistryComponent {
     pub impl InternalImpl<
         TContractState, +HasComponent<TContractState>
     > of InternalTrait<TContractState> {
-        fn _register_credentials(
-            ref self: ComponentState<TContractState>,
-            hash: felt252,
-            contract_address: ContractAddress,
-            signature: Array<felt252>
+        fn _register_credential(
+            ref self: ComponentState<TContractState>, hash: felt252, address: ContractAddress
         ) {
             assert(
-                self.credentials.entry(hash).read() == contract_address_const::<0>(),
+                self.credentials.entry(hash).read().is_zero(),
                 CredentialRegistryErrors::CREDENTIAL_REGISTERED
             );
 
-            self.credentials.entry(hash).write(contract_address);
-            self.user_to_credentials.entry(contract_address).write(hash);
+            self.credentials.entry(hash).write(address);
+        }
+        fn _register_user(
+            ref self: ComponentState<TContractState>, address: ContractAddress, hash: felt252
+        ) {
+            assert(
+                self.user_to_credentials.entry(address).read().is_zero(),
+                CredentialRegistryErrors::CREDENTIAL_REGISTERED
+            );
+
+            self.user_to_credentials.entry(address).write(hash);
         }
     }
 }

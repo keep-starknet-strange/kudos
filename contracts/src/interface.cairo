@@ -7,4 +7,5 @@ pub trait IKudos<TState> {
         receiver_credentials: felt252,
         description: felt252,
     );
+    fn register_sw_employee(ref self: TState, credential_hash: felt252,);
 }

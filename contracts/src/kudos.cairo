@@ -1,13 +1,23 @@
 #[starknet::contract]
 pub mod Kudos {
-    // use kudos::token::{IERC20, IERC20Metadata};
     use kudos::IKudos;
-    use kudos::oz16::erc20::{ERC20Component, ERC20HooksEmptyImpl};
+    use kudos::credential_registry::{ICredentialRegistry, CredentialRegistryComponent};
+    use kudos::oz16::erc20::{ERC20Component, ERC20HooksEmptyImpl, ERC20Component::InternalTrait};
     use kudos::oz16::ownable::OwnableComponent;
-    use starknet::ContractAddress;
+    use kudos::utils::constants::REGISTRATION_AMOUNT;
+    use starknet::{ContractAddress, get_caller_address};
 
-    component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
+    component!(
+        path: CredentialRegistryComponent,
+        storage: credential_registry,
+        event: CredentialRegistryEvent
+    );
     component!(path: ERC20Component, storage: erc20, event: ERC20Event);
+    component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
+
+    #[abi(embed_v0)]
+    impl CredentialRegistryImpl =
+        CredentialRegistryComponent::CredentialRegistryImpl<ContractState>;
 
     #[abi(embed_v0)]
     impl ERC20Impl = ERC20Component::ERC20Impl<ContractState>;
@@ -17,10 +27,10 @@ pub mod Kudos {
     impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
     impl OwnableInternalImpl = OwnableComponent::InternalImpl<ContractState>;
 
-    // TODO: Embed the credential registry component
-
     #[storage]
     struct Storage {
+        #[substorage(v0)]
+        credential_registry: CredentialRegistryComponent::Storage,
         #[substorage(v0)]
         erc20: ERC20Component::Storage,
         #[substorage(v0)]
@@ -34,7 +44,9 @@ pub mod Kudos {
     // - Test for even submission
     #[event]
     #[derive(Drop, starknet::Event)]
-    enum Event {
+    pub enum Event {
+        #[flat]
+        CredentialRegistryEvent: CredentialRegistryComponent::Event,
         #[flat]
         ERC20Event: ERC20Component::Event,
         #[flat]
@@ -62,5 +74,11 @@ pub mod Kudos {
             receiver_credentials: felt252,
             description: felt252,
         ) {}
+
+        fn register_sw_employee(ref self: ContractState, credential_hash: felt252,) {
+            let caller = get_caller_address();
+            self.register_credentials(caller, credential_hash);
+            self.erc20.mint(caller, REGISTRATION_AMOUNT);
+        }
     }
 }
