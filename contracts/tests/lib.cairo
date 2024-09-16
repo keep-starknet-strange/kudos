@@ -1,8 +1,12 @@
 mod utils;
-use kudos::credential_registry::{CredentialRegistryComponent, ICredentialRegistryDispatcher, ICredentialRegistryDispatcherTrait};
+use kudos::credential_registry::{
+    CredentialRegistryComponent, ICredentialRegistryDispatcher, ICredentialRegistryDispatcherTrait
+};
 use kudos::oz16::erc20::ERC20Component;
 use kudos::oz16::{IERC20Dispatcher, IERC20DispatcherTrait};
-use kudos::utils::constants::{CALLER, NAME, SYMBOL, DECIMALS, CREDENTIAL_HASH, REGISTRATION_AMOUNT, ZERO_ADDRESS};
+use kudos::utils::constants::{
+    CALLER, NAME, SYMBOL, DECIMALS, CREDENTIAL_HASH, REGISTRATION_AMOUNT, ZERO_ADDRESS
+};
 use kudos::{IKudosDispatcher, IKudosDispatcherTrait};
 use snforge_std::{spy_events, EventSpyAssertionsTrait, start_cheat_caller_address};
 
@@ -39,11 +43,9 @@ fn test_register_sw_employee_mint() {
     assert_eq!(token.balance_of(CALLER()), REGISTRATION_AMOUNT);
     assert_eq!(token.total_supply(), REGISTRATION_AMOUNT);
 
-    let expected_erc20_event = ERC20Component::Event::Transfer(ERC20Component::Transfer {
-        from: ZERO_ADDRESS(),
-        to: CALLER(),
-        value: REGISTRATION_AMOUNT,
-    });
+    let expected_erc20_event = ERC20Component::Event::Transfer(
+        ERC20Component::Transfer { from: ZERO_ADDRESS(), to: CALLER(), value: REGISTRATION_AMOUNT, }
+    );
     spy.assert_emitted(@array![(contract_address, expected_erc20_event)]);
 }
 
@@ -70,6 +72,4 @@ fn test_register_sw_employee_registered() {
         }
     );
     spy.assert_emitted(@array![(contract_address, expected_cr_event)]);
-
-
 }
