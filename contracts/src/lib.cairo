@@ -1,24 +1,23 @@
-mod kudos;
+mod interface;
+pub mod kudos;
+pub use interface::{IKudos, IKudosDispatcher, IKudosDispatcherTrait};
 
-mod credential_registry {
-    pub mod component;
-    mod interface;
+pub mod oz16 {
+    pub mod erc20;
 
-    pub use interface::{
-        ICredentialRegistry, ICredentialRegistryDispatcher, ICredentialRegistryDispatcherTrait
+    mod interfaces;
+    pub mod ownable;
+    pub use interfaces::{
+        IERC20, IERC20Dispatcher, IERC20DispatcherTrait, IOwnable, IOwnableDispatcher,
+        IOwnableDispatcherTrait
     };
 }
 
-mod tests {
-    #[cfg(test)]
-    pub(crate) mod common;
-    #[cfg(test)]
-    mod test_credential_registry;
-    mod mocks {
-        pub(crate) mod account_mock;
-        pub(crate) mod credential_registry_mock;
-    }
-    pub(crate) mod utils {
-        pub(crate) mod constants;
-    }
+pub mod credential_registry {
+    pub mod component;
+
+    mod interface;
+    pub use interface::{
+        ICredentialRegistry, ICredentialRegistryDispatcher, ICredentialRegistryDispatcherTrait
+    };
 }
