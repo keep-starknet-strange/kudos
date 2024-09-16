@@ -1,5 +1,5 @@
 #[starknet::contract]
-pub(crate) mod CredentialRegistryMock {
+pub mod CredentialRegistryMock {
     use kudos::credential_registry::component::CredentialRegistryComponent;
 
     component!(
