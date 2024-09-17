@@ -18,6 +18,17 @@ pub trait IERC20<TState> {
     fn approve(ref self: TState, spender: ContractAddress, amount: u256) -> bool;
 }
 
+
+#[starknet::interface]
+pub trait IERC20ReadOnly<TState> {
+    fn name(self: @TState) -> ByteArray;
+    fn symbol(self: @TState) -> ByteArray;
+    fn decimals(self: @TState) -> u8;
+    fn total_supply(self: @TState) -> u256;
+    fn balance_of(self: @TState, account: ContractAddress) -> u256;
+    fn allowance(self: @TState, owner: ContractAddress, spender: ContractAddress) -> u256;
+}
+
 #[starknet::interface]
 pub trait IOwnable<TState> {
     fn owner(self: @TState) -> ContractAddress;

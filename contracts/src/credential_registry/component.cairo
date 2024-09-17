@@ -1,16 +1,16 @@
 #[starknet::component]
 pub mod CredentialRegistryComponent {
     use core::num::traits::zero::Zero;
-    use kudos::credential_registry::interface::ICredentialRegistry;
+    use kudos::credential_registry::ICredentialRegistry;
+    use starknet::ContractAddress;
     use starknet::storage::{
         StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map
     };
-    use starknet::{ContractAddress, contract_address_const, get_caller_address};
 
     #[storage]
     pub struct Storage {
         credentials: Map::<felt252, ContractAddress>,
-        user_to_credentials: Map::<ContractAddress, felt252>,
+        address_to_credential: Map::<ContractAddress, felt252>,
         total_credentials: u128,
     }
 
@@ -27,10 +27,9 @@ pub mod CredentialRegistryComponent {
         pub hash: felt252,
     }
 
-    pub mod CredentialRegistryErrors {
-        pub const CREDENTIAL_REGISTERED: felt252 = 'User prev registered cred';
-        pub const CREDENTIAL_INVALID: felt252 = 'User provided is invalid';
-        pub const INVALID_SIGNATURE: felt252 = 'Invalid signature provided';
+    pub mod Errors {
+        pub const CREDENTIAL_DUPLICATE: felt252 = 'User already registered cred';
+        pub const ADDRESS_DUPLICATE: felt252 = 'User already registered addr';
     }
 
     #[embeddable_as(CredentialRegistryImpl)]
@@ -38,24 +37,21 @@ pub mod CredentialRegistryComponent {
         TContractState, +HasComponent<TContractState>
     > of ICredentialRegistry<ComponentState<TContractState>> {
         fn register_credentials(
-            ref self: ComponentState<TContractState>, hash: felt252, signature: Array<felt252>,
+            ref self: ComponentState<TContractState>, address: ContractAddress, hash: felt252,
         ) {
-            let address = get_caller_address();
-
-            self._register_credentials(hash, address, signature);
+            self._register_credential(hash, address);
+            self._register_user(address, hash);
 
             let prev_total = self.total_credentials.read();
             self.total_credentials.write(prev_total + 1);
 
-            // TODO: mint $KUDOS here
-
-            self.emit(CredentialsRegistered { address, hash })
+            self.emit(CredentialsRegistered { address, hash });
         }
 
         fn get_credential(
             self: @ComponentState<TContractState>, address: ContractAddress
         ) -> felt252 {
-            self.user_to_credentials.entry(address).read()
+            self.address_to_credential.entry(address).read()
         }
 
         fn get_credential_address(
@@ -69,7 +65,17 @@ pub mod CredentialRegistryComponent {
         }
 
         fn is_registered(self: @ComponentState<TContractState>, address: ContractAddress) -> bool {
-            self.user_to_credentials.entry(address).read().is_non_zero()
+            let credential = self.address_to_credential.entry(address).read();
+            if credential.is_zero() {
+                return false;
+            };
+
+            let registered_address = self.get_credential_address(credential);
+            if registered_address.is_zero() {
+                return false;
+            };
+
+            registered_address == address
         }
     }
 
@@ -77,19 +83,22 @@ pub mod CredentialRegistryComponent {
     pub impl InternalImpl<
         TContractState, +HasComponent<TContractState>
     > of InternalTrait<TContractState> {
-        fn _register_credentials(
-            ref self: ComponentState<TContractState>,
-            hash: felt252,
-            contract_address: ContractAddress,
-            signature: Array<felt252>
+        fn _register_credential(
+            ref self: ComponentState<TContractState>, hash: felt252, address: ContractAddress
+        ) {
+            assert(self.credentials.entry(hash).read().is_zero(), Errors::CREDENTIAL_DUPLICATE);
+
+            self.credentials.entry(hash).write(address);
+        }
+        fn _register_user(
+            ref self: ComponentState<TContractState>, address: ContractAddress, hash: felt252
         ) {
             assert(
-                self.credentials.entry(hash).read() == contract_address_const::<0>(),
-                CredentialRegistryErrors::CREDENTIAL_REGISTERED
+                self.address_to_credential.entry(address).read().is_zero(),
+                Errors::ADDRESS_DUPLICATE
             );
 
-            self.credentials.entry(hash).write(contract_address);
-            self.user_to_credentials.entry(contract_address).write(hash);
+            self.address_to_credential.entry(address).write(hash);
         }
     }
 }
