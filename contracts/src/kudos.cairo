@@ -53,8 +53,6 @@ pub mod Kudos {
         KudosGiven: KudosGiven,
         #[flat]
         OwnableEvent: OwnableComponent::Event,
-        #[flat]
-        CredentialRegistryEvent: CredentialRegistryComponent::Event,
     }
 
     #[derive(Drop, starknet::Event)]

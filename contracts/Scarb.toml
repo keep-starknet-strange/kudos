@@ -3,6 +3,11 @@ name = "kudos"
 version = "0.1.0"
 edition = "2024_07"
 
+[cairo]
+unstable-add-statements-code-locations-debug-info = true
+unstable-add-statements-functions-debug-info = true
+inlining-strategy = "avoid"
+
 [scripts]
 test = "snforge test"
 
