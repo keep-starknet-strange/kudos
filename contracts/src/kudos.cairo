@@ -1,5 +1,6 @@
 #[starknet::contract]
 pub mod Kudos {
+
     use kudos::IKudos;
     use kudos::credential_registry::{ICredentialRegistry, CredentialRegistryComponent};
     use kudos::oz16::IERC20ReadOnly;
@@ -52,6 +53,8 @@ pub mod Kudos {
         KudosGiven: KudosGiven,
         #[flat]
         OwnableEvent: OwnableComponent::Event,
+        #[flat]
+        CredentialRegistryEvent: CredentialRegistryComponent::Event,
     }
 
     #[derive(Drop, starknet::Event)]
