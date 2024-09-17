@@ -25,7 +25,8 @@ pub fn ZERO_ADDRESS() -> ContractAddress {
 //
 
 pub const DECIMALS: u8 = 18;
-pub const REGISTRATION_AMOUNT: u256 = 1_000_000_000_000_000_000_000_000;
+pub const ONE: u256 = 1_000_000_000_000_000_000;
+pub const REGISTRATION_AMOUNT: u256 = 1_000_000_000_000_000_000_000;
 
 pub fn NAME() -> ByteArray {
     "Kudos"
@@ -40,3 +41,4 @@ pub fn SYMBOL() -> ByteArray {
 //
 
 pub const CREDENTIAL_HASH: felt252 = 0xDEADBEEF;
+pub const CREDENTIAL_HASH_2: felt252 = 0xBEEFDEAD;

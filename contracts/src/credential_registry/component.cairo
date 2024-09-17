@@ -10,7 +10,7 @@ pub mod CredentialRegistryComponent {
     #[storage]
     pub struct Storage {
         credentials: Map::<felt252, ContractAddress>,
-        user_to_credentials: Map::<ContractAddress, felt252>,
+        address_to_credential: Map::<ContractAddress, felt252>,
         total_credentials: u128,
     }
 
@@ -27,10 +27,9 @@ pub mod CredentialRegistryComponent {
         pub hash: felt252,
     }
 
-    pub mod CredentialRegistryErrors {
-        pub const CREDENTIAL_REGISTERED: felt252 = 'User prev registered cred';
-        pub const CREDENTIAL_INVALID: felt252 = 'User provided is invalid';
-        pub const INVALID_SIGNATURE: felt252 = 'Invalid signature provided';
+    pub mod Errors {
+        pub const CREDENTIAL_DUPLICATE: felt252 = 'User already registered cred';
+        pub const ADDRESS_DUPLICATE: felt252 = 'User already registered addr';
     }
 
     #[embeddable_as(CredentialRegistryImpl)]
@@ -46,13 +45,13 @@ pub mod CredentialRegistryComponent {
             let prev_total = self.total_credentials.read();
             self.total_credentials.write(prev_total + 1);
 
-            self.emit(CredentialsRegistered { address, hash })
+            self.emit(CredentialsRegistered { address, hash });
         }
 
         fn get_credential(
             self: @ComponentState<TContractState>, address: ContractAddress
         ) -> felt252 {
-            self.user_to_credentials.entry(address).read()
+            self.address_to_credential.entry(address).read()
         }
 
         fn get_credential_address(
@@ -66,7 +65,7 @@ pub mod CredentialRegistryComponent {
         }
 
         fn is_registered(self: @ComponentState<TContractState>, address: ContractAddress) -> bool {
-            let credential = self.user_to_credentials.entry(address).read();
+            let credential = self.address_to_credential.entry(address).read();
             let registered_address = self.get_credential_address(credential);
             registered_address == address
         }
@@ -79,10 +78,7 @@ pub mod CredentialRegistryComponent {
         fn _register_credential(
             ref self: ComponentState<TContractState>, hash: felt252, address: ContractAddress
         ) {
-            assert(
-                self.credentials.entry(hash).read().is_zero(),
-                CredentialRegistryErrors::CREDENTIAL_REGISTERED
-            );
+            assert(self.credentials.entry(hash).read().is_zero(), Errors::CREDENTIAL_DUPLICATE);
 
             self.credentials.entry(hash).write(address);
         }
@@ -90,11 +86,11 @@ pub mod CredentialRegistryComponent {
             ref self: ComponentState<TContractState>, address: ContractAddress, hash: felt252
         ) {
             assert(
-                self.user_to_credentials.entry(address).read().is_zero(),
-                CredentialRegistryErrors::CREDENTIAL_REGISTERED
+                self.address_to_credential.entry(address).read().is_zero(),
+                Errors::ADDRESS_DUPLICATE
             );
 
-            self.user_to_credentials.entry(address).write(hash);
+            self.address_to_credential.entry(address).write(hash);
         }
     }
 }

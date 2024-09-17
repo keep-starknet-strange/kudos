@@ -41,7 +41,7 @@ fn test_register_credential() {
 }
 
 #[test]
-#[should_panic(expected: 'User prev registered cred')]
+#[should_panic(expected: 'User already registered cred')]
 fn test_double_register_credential() {
     let mut registry: ComponentState = Default::default();
     registry._register_credential(CREDENTIAL_HASH, CALLER());
@@ -49,7 +49,7 @@ fn test_double_register_credential() {
 }
 
 #[test]
-#[should_panic(expected: 'User prev registered cred')]
+#[should_panic(expected: 'User already registered addr')]
 fn test_double_register_user() {
     let mut registry: ComponentState = Default::default();
     registry._register_user(CALLER(), CREDENTIAL_HASH);
