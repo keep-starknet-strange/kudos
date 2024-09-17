@@ -9,7 +9,7 @@ jobs:
       - uses: foundry-rs/setup-snfoundry@v3
 
       - name: Run tests and generate report
-        run: snforge test --coverage
+        run: cd contracts/ && snforge test --coverage
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
