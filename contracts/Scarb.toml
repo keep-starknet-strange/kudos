@@ -10,6 +10,7 @@ inlining-strategy = "avoid"
 
 [scripts]
 test = "snforge test"
+coverage = "snforge test --coverage"
 
 [tool.fmt]
 sort-module-level-items = true
