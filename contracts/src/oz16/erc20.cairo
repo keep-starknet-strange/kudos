@@ -122,16 +122,6 @@ pub mod ERC20Component {
             self.ERC20_balances.read(account)
         }
 
-        /// Returns the remaining number of tokens that `spender` is
-        /// allowed to spend on behalf of `owner` through `transfer_from`.
-        /// This is zero by default.
-        /// This value changes when `approve` or `transfer_from` are called.
-        fn allowance(
-            self: @ComponentState<TContractState>, owner: ContractAddress, spender: ContractAddress
-        ) -> u256 {
-            self.ERC20_allowances.read((owner, spender))
-        }
-
         /// Moves `amount` tokens from the caller's token balance to `to`.
         ///
         /// Requirements:
