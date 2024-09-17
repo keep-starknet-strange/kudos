@@ -16,4 +16,4 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           file: ./coverage.lcov
-          token: ${{ ENV.CODECOV_TOKEN }}ENV>
+          token: ${{ secrets.CODECOV_TOKEN }}ENV>
