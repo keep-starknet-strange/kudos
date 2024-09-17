@@ -135,10 +135,5 @@ pub mod Kudos {
         fn balance_of(self: @ContractState, account: ContractAddress) -> u256 {
             self.erc20.balance_of(account)
         }
-        fn allowance(
-            self: @ContractState, owner: ContractAddress, spender: ContractAddress
-        ) -> u256 {
-            self.erc20.allowance(owner, spender)
-        }
     }
 }
