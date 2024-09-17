@@ -1,6 +1,5 @@
 #[starknet::contract]
 pub mod Kudos {
-
     use kudos::IKudos;
     use kudos::credential_registry::{ICredentialRegistry, CredentialRegistryComponent};
     use kudos::oz16::IERC20ReadOnly;

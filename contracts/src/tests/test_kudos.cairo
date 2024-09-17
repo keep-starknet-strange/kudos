@@ -9,4 +9,3 @@ use starknet::ContractAddress;
 
 type ComponentState =
     CredentialRegistryComponent::ComponentState<CredentialRegistryMock::ContractState>;
-    
