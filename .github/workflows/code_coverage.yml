@@ -15,5 +15,5 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          file: .contracts/coverage.lcov
+          file: contracts/coverage.lcov
           token: ${{ secrets.CODECOV_TOKEN }}ENV>
