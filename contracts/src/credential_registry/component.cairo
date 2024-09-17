@@ -66,7 +66,15 @@ pub mod CredentialRegistryComponent {
 
         fn is_registered(self: @ComponentState<TContractState>, address: ContractAddress) -> bool {
             let credential = self.address_to_credential.entry(address).read();
+            if credential.is_zero() {
+                return false;
+            };
+
             let registered_address = self.get_credential_address(credential);
+            if registered_address.is_zero() {
+                return false;
+            };
+
             registered_address == address
         }
     }

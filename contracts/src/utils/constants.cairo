@@ -8,8 +8,8 @@ pub fn RECEIVER() -> ContractAddress {
     contract_address_const::<'RECEIVER'>()
 }
 
-pub fn SENDER() -> ContractAddress {
-    contract_address_const::<'SENDER'>()
+pub fn DUMMY() -> ContractAddress {
+    contract_address_const::<'DUMMY'>()
 }
 
 pub fn OWNER() -> ContractAddress {
@@ -42,3 +42,4 @@ pub fn SYMBOL() -> ByteArray {
 
 pub const CREDENTIAL_HASH: felt252 = 0xDEADBEEF;
 pub const CREDENTIAL_HASH_2: felt252 = 0xBEEFDEAD;
+pub const CREDENTIAL_HASH_BAD: felt252 = 0xBAD;

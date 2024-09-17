@@ -6,7 +6,7 @@ use kudos::oz16::erc20::ERC20Component;
 use kudos::oz16::{IERC20Dispatcher, IERC20DispatcherTrait};
 use kudos::utils::constants::{
     CALLER, NAME, SYMBOL, DECIMALS, CREDENTIAL_HASH, CREDENTIAL_HASH_2, REGISTRATION_AMOUNT,
-    ZERO_ADDRESS, RECEIVER
+    ZERO_ADDRESS, RECEIVER, DUMMY, CREDENTIAL_HASH_BAD
 };
 use kudos::{Kudos, IKudosDispatcher, IKudosDispatcherTrait};
 use snforge_std::{spy_events, EventSpyAssertionsTrait, start_cheat_caller_address};
@@ -99,4 +99,20 @@ fn test_give_kudos() {
         }
     );
     spy.assert_emitted(@array![(kudos.contract_address, expected_kudos_event)]);
+}
+
+#[test]
+#[should_panic(expected: 'Sender not registered')]
+fn test_give_kudos_sender_unregistered() {
+    let kudos = IKudosDispatcher { contract_address: setup_registered() };
+    start_cheat_caller_address(kudos.contract_address, DUMMY());
+    kudos.give_kudos(test_amount(), CREDENTIAL_HASH, CREDENTIAL_HASH_2, test_description());
+}
+
+#[test]
+#[should_panic(expected: 'Receiver not registered')]
+fn test_give_kudos_receiver_unregistered() {
+    let kudos = IKudosDispatcher { contract_address: setup_registered() };
+    start_cheat_caller_address(kudos.contract_address, CALLER());
+    kudos.give_kudos(test_amount(), CREDENTIAL_HASH, CREDENTIAL_HASH_BAD, test_description());
 }
