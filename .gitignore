@@ -2,5 +2,10 @@
 contracts/target
 contracts/.snfoundry_cache/
 
+# snforge --coverage
+contracts/.snfoundry_versioned_programs
+contracts/snfoundry_trace
+contracts/coverage
+
 # `mac`
 **/.DS_Store
