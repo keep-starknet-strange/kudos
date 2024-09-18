@@ -36,6 +36,8 @@ cd contracts && scarb test
 
 [![codecov](https://codecov.io/gh/keep-starknet-strange/kudos/blob/branch/main/graph/badge.svg)](https://codecov.io/gh/keep-starknet-strange/kudos)
 
+Check out the [installation](https://github.com/software-mansion/cairo-coverage#installation) section of `cairo-coverage` for the detailed installation instructions.
+
 ```bash
 cd contracts && snforge test --coverage
 ```
