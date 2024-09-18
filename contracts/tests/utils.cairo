@@ -1,5 +1,5 @@
 use kudos::utils::constants::{
-    NAME, SYMBOL, OWNER, CALLER, RECEIVER, CREDENTIAL_HASH, CREDENTIAL_HASH_2, ONE
+    NAME, SYMBOL, CALLER, RECEIVER, CREDENTIAL_HASH, CREDENTIAL_HASH_2, ONE
 };
 use kudos::{IKudosDispatcher, IKudosDispatcherTrait};
 use snforge_std::{declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address};
@@ -25,7 +25,6 @@ pub fn setup() -> ContractAddress {
     let mut calldata: Array<felt252> = array![];
     calldata.append_serde(NAME());
     calldata.append_serde(SYMBOL());
-    calldata.append_serde(OWNER());
 
     declare_deploy("Kudos", calldata)
 }
