@@ -41,6 +41,17 @@ fn test_register_credential() {
 }
 
 #[test]
+fn test_register_credential_address_zero() {
+    let mut registry: ComponentState = Default::default();
+    registry._register_credential(CREDENTIAL_HASH, ZERO_ADDRESS());
+    registry._register_user(ZERO_ADDRESS(), CREDENTIAL_HASH);
+
+    assert!(registry.get_credential(ZERO_ADDRESS()) == CREDENTIAL_HASH);
+    assert!(registry.is_registered(ZERO_ADDRESS()) == false);
+    assert!(registry.get_credential_address(CREDENTIAL_HASH) == ZERO_ADDRESS());
+}
+
+#[test]
 #[should_panic(expected: 'User already registered cred')]
 fn test_double_register_credential() {
     let mut registry: ComponentState = Default::default();
