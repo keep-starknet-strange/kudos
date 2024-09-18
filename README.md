@@ -32,3 +32,15 @@ Starknet contracts to handle:
 ```bash
 cd contracts && scarb test
 ```
+
+## Slack App
+
+You'll know an app is the development version if the
+name has the string `(local)` appended.
+
+```bash
+# Run app locally
+$ slack run
+
+Connected, awaiting events
+```
