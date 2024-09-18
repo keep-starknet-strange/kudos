@@ -3,14 +3,9 @@ name = "kudos"
 version = "0.1.0"
 edition = "2024_07"
 
-[cairo]
-unstable-add-statements-code-locations-debug-info = true
-unstable-add-statements-functions-debug-info = true
-inlining-strategy = "avoid"
-
 [scripts]
 test = "snforge test"
-coverage = "snforge test --coverage"
+
 
 [tool.fmt]
 sort-module-level-items = true
@@ -21,5 +16,10 @@ starknet = "2.8.2"
 [dev-dependencies]
 assert_macros = "2.8.2"
 snforge_std = "0.30.0"
+
+[profile.dev.cairo]
+unstable-add-statements-functions-debug-info = true
+unstable-add-statements-code-locations-debug-info = true
+inlining-strategy= "avoid"
 
 [[target.starknet-contract]]
