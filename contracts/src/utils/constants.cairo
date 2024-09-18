@@ -12,10 +12,6 @@ pub fn DUMMY() -> ContractAddress {
     contract_address_const::<'DUMMY'>()
 }
 
-pub fn OWNER() -> ContractAddress {
-    contract_address_const::<'OWNER'>()
-}
-
 pub fn ZERO_ADDRESS() -> ContractAddress {
     contract_address_const::<0>()
 }

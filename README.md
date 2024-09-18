@@ -1,6 +1,7 @@
 # Kudos
 
 [![Check Workflow Status](https://github.com/keep-starknet-strange/kudos/actions/workflows/check.yml/badge.svg)](https://github.com/keep-starknet-strange/kudos/actions/workflows/check.yml)
+[![codecov](https://codecov.io/gh/keep-starknet-strange/kudos/blob/branch/main/graph/badge.svg)](https://codecov.io/gh/keep-starknet-strange/kudos)
 
 An internal application to delegate `kudos` on Starknet by using Google OAuth.
 
@@ -32,3 +33,11 @@ Starknet contracts to handle:
 ```bash
 cd contracts && scarb test
 ```
+***Code Coverage***
+
+Check out the [installation](https://github.com/software-mansion/cairo-coverage#installation) section of `cairo-coverage` for the detailed installation instructions.
+
+```bash
+cd contracts && snforge test --coverage
+```
+

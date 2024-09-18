@@ -24,3 +24,19 @@ jobs:
             - uses: asdf-vm/actions/install@v3
             - run: scarb test
               working-directory: contracts
+              
+    coverage:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - uses: asdf-vm/actions/install@v3
+        - run: curl -L https://raw.githubusercontent.com/software-mansion/cairo-coverage/main/scripts/install.sh | sh
+
+        - name: Run tests and generate report
+          run: cd contracts/ && snforge test --coverage
+
+        - name: Upload coverage to Codecov
+          uses: codecov/codecov-action@v4
+          with:
+            file: ./coverage.lcov
+            token: ${{ secrets.CODECOV_TOKEN }}
