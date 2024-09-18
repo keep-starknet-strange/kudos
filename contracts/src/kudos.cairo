@@ -4,7 +4,6 @@ pub mod Kudos {
     use kudos::credential_registry::{ICredentialRegistry, CredentialRegistryComponent};
     use kudos::oz16::IERC20ReadOnly;
     use kudos::oz16::erc20::{ERC20Component, ERC20HooksEmptyImpl, ERC20Component::InternalTrait};
-    use kudos::oz16::ownable::OwnableComponent;
     use kudos::utils::constants::REGISTRATION_AMOUNT;
     use starknet::storage::{
         StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map
@@ -17,7 +16,6 @@ pub mod Kudos {
         event: CredentialRegistryEvent
     );
     component!(path: ERC20Component, storage: erc20, event: ERC20Event);
-    component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
 
     #[abi(embed_v0)]
     impl CredentialRegistryImpl =
@@ -26,18 +24,12 @@ pub mod Kudos {
     impl ERC20Impl = ERC20Component::ERC20Impl<ContractState>;
     impl ERC20InternalImpl = ERC20Component::InternalImpl<ContractState>;
 
-    #[abi(embed_v0)]
-    impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
-    impl OwnableInternalImpl = OwnableComponent::InternalImpl<ContractState>;
-
     #[storage]
     struct Storage {
         #[substorage(v0)]
         credential_registry: CredentialRegistryComponent::Storage,
         #[substorage(v0)]
         erc20: ERC20Component::Storage,
-        #[substorage(v0)]
-        ownable: OwnableComponent::Storage,
         total_given: Map<ContractAddress, u256>,
         total_received: Map<ContractAddress, u256>
     }
@@ -50,8 +42,6 @@ pub mod Kudos {
         #[flat]
         ERC20Event: ERC20Component::Event,
         KudosGiven: KudosGiven,
-        #[flat]
-        OwnableEvent: OwnableComponent::Event,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -70,11 +60,8 @@ pub mod Kudos {
     }
 
     #[constructor]
-    fn constructor(
-        ref self: ContractState, name: ByteArray, symbol: ByteArray, owner: ContractAddress
-    ) {
+    fn constructor(ref self: ContractState, name: ByteArray, symbol: ByteArray) {
         self.erc20.initializer(name, symbol);
-        self.ownable.initializer(owner);
     }
 
     #[abi(embed_v0)]
