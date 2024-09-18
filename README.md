@@ -32,3 +32,11 @@ Starknet contracts to handle:
 ```bash
 cd contracts && scarb test
 ```
+***Code Coverage***
+
+[![codecov](https://codecov.io/gh/keep-starknet-strange/kudos/blob/branch/main/graph/badge.svg)](https://codecov.io/gh/keep-starknet-strange/kudos)
+
+```bash
+cd contracts && snforge test --coverage
+```
+
