@@ -2,4 +2,4 @@
 [sncast.starknet-devnet]
 account = "kudos_acct"
 accounts-file = "/Users/zackwilliams/.kudos/tmp/1726773131/starknet_accounts.json"
-url = ""
+url = "http://127.0.0.1:5050"
