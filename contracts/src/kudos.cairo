@@ -5,9 +5,6 @@ pub mod Kudos {
     use kudos::oz16::IERC20ReadOnly;
     use kudos::oz16::erc20::{ERC20Component, ERC20HooksEmptyImpl, ERC20Component::InternalTrait};
     use kudos::utils::constants::REGISTRATION_AMOUNT;
-    use starknet::storage::{
-        StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map
-    };
     use starknet::{ContractAddress, get_caller_address};
 
     component!(
@@ -81,11 +78,11 @@ pub mod Kudos {
 
             self.erc20.transfer(receiver, amount);
 
-            let total_given = self.total_given.entry(sender).read();
-            self.total_given.entry(sender).write(total_given + amount);
+            let total_given = self.total_given.read(sender);
+            self.total_given.write(sender, total_given + amount);
 
-            let total_received = self.total_given.entry(receiver).read();
-            self.total_received.entry(receiver).write(total_received + amount);
+            let total_received = self.total_given.read(receiver);
+            self.total_received.write(receiver, total_received + amount);
 
             self.emit(KudosGiven { sender, receiver, amount, description });
         }
@@ -97,11 +94,11 @@ pub mod Kudos {
         }
 
         fn get_total_given(self: @ContractState, address: ContractAddress) -> u256 {
-            self.total_given.entry(address).read()
+            self.total_given.read(address)
         }
 
         fn get_total_received(self: @ContractState, address: ContractAddress) -> u256 {
-            self.total_received.entry(address).read()
+            self.total_received.read(address)
         }
     }
 
