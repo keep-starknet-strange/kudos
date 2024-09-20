@@ -3,14 +3,11 @@ pub mod CredentialRegistryComponent {
     use core::num::traits::zero::Zero;
     use kudos::credential_registry::ICredentialRegistry;
     use starknet::ContractAddress;
-    use starknet::storage::{
-        StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map
-    };
 
     #[storage]
     pub struct Storage {
-        credentials: Map::<felt252, ContractAddress>,
-        address_to_credential: Map::<ContractAddress, felt252>,
+        credentials: LegacyMap::<felt252, ContractAddress>,
+        address_to_credential: LegacyMap::<ContractAddress, felt252>,
         total_credentials: u128,
     }
 
@@ -51,13 +48,13 @@ pub mod CredentialRegistryComponent {
         fn get_credential(
             self: @ComponentState<TContractState>, address: ContractAddress
         ) -> felt252 {
-            self.address_to_credential.entry(address).read()
+            self.address_to_credential.read(address)
         }
 
         fn get_credential_address(
             self: @ComponentState<TContractState>, hash: felt252
         ) -> ContractAddress {
-            self.credentials.entry(hash).read()
+            self.credentials.read(hash)
         }
 
         fn get_total_credentials(self: @ComponentState<TContractState>) -> u128 {
@@ -65,13 +62,13 @@ pub mod CredentialRegistryComponent {
         }
 
         fn is_registered(self: @ComponentState<TContractState>, address: ContractAddress) -> bool {
-            let credential = self.address_to_credential.entry(address).read();
-            if credential.is_zero() {
+            let credential = self.address_to_credential.read(address);
+            if credential == 0 {
                 return false;
             };
 
             let registered_address = self.get_credential_address(credential);
-            if registered_address.is_zero() {
+            if registered_address == starknet::contract_address_const::<0>() {
                 return false;
             };
 
@@ -86,19 +83,19 @@ pub mod CredentialRegistryComponent {
         fn _register_credential(
             ref self: ComponentState<TContractState>, hash: felt252, address: ContractAddress
         ) {
-            assert(self.credentials.entry(hash).read().is_zero(), Errors::CREDENTIAL_DUPLICATE);
+            assert(self.credentials.read(hash) == starknet::contract_address_const::<0>(), Errors::CREDENTIAL_DUPLICATE);
 
-            self.credentials.entry(hash).write(address);
+            self.credentials.write(hash, address);
         }
         fn _register_user(
             ref self: ComponentState<TContractState>, address: ContractAddress, hash: felt252
         ) {
             assert(
-                self.address_to_credential.entry(address).read().is_zero(),
+                self.address_to_credential.read(address) == 0,
                 Errors::ADDRESS_DUPLICATE
             );
 
-            self.address_to_credential.entry(address).write(hash);
+            self.address_to_credential.write(address, hash);
         }
     }
 }
