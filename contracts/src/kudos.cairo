@@ -30,8 +30,8 @@ pub mod Kudos {
         credential_registry: CredentialRegistryComponent::Storage,
         #[substorage(v0)]
         erc20: ERC20Component::Storage,
-        total_given: Map<ContractAddress, u256>,
-        total_received: Map<ContractAddress, u256>
+        total_given: LegacyMap<ContractAddress, u256>,
+        total_received: LegacyMap<ContractAddress, u256>
     }
 
     #[event]
