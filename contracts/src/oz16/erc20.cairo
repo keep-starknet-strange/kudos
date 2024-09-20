@@ -12,23 +12,17 @@
 /// for examples.
 #[starknet::component]
 pub mod ERC20Component {
-    use core::num::traits::Bounded;
-    use core::num::traits::Zero;
     use kudos::oz16::IERC20;
     use starknet::ContractAddress;
     use starknet::get_caller_address;
-    use starknet::storage::{
-        Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
-        StoragePointerWriteAccess
-    };
 
     #[storage]
     pub struct Storage {
         pub ERC20_name: ByteArray,
         pub ERC20_symbol: ByteArray,
         pub ERC20_total_supply: u256,
-        pub ERC20_balances: Map<ContractAddress, u256>,
-        pub ERC20_allowances: Map<(ContractAddress, ContractAddress), u256>,
+        pub ERC20_balances: LegacyMap<ContractAddress, u256>,
+        pub ERC20_allowances: LegacyMap<(ContractAddress, ContractAddress), u256>,
     }
 
     #[event]
@@ -80,14 +74,14 @@ pub mod ERC20Component {
             from: ContractAddress,
             recipient: ContractAddress,
             amount: u256
-        ) {}
+        ) -> ();
 
         fn after_update(
             ref self: ComponentState<TContractState>,
             from: ContractAddress,
             recipient: ContractAddress,
             amount: u256
-        ) {}
+        ) -> ();
     }
 
     //
@@ -205,8 +199,8 @@ pub mod ERC20Component {
         fn mint(
             ref self: ComponentState<TContractState>, recipient: ContractAddress, amount: u256
         ) {
-            assert(!recipient.is_zero(), Errors::MINT_TO_ZERO);
-            self.update(Zero::zero(), recipient, amount);
+            assert(recipient != starknet::contract_address_const::<0>(), Errors::MINT_TO_ZERO);
+            self.update(starknet::contract_address_const::<0>(), recipient, amount);
         }
 
         /// Destroys `amount` of tokens from `account`.
@@ -218,8 +212,8 @@ pub mod ERC20Component {
         ///
         /// Emits a `Transfer` event with `to` set to the zero address.
         fn burn(ref self: ComponentState<TContractState>, account: ContractAddress, amount: u256) {
-            assert(!account.is_zero(), Errors::BURN_FROM_ZERO);
-            self.update(account, Zero::zero(), amount);
+            assert(account != starknet::contract_address_const::<0>(), Errors::BURN_FROM_ZERO);
+            self.update(account, starknet::contract_address_const::<0>(), amount);
         }
 
 
@@ -238,7 +232,7 @@ pub mod ERC20Component {
         ) {
             Hooks::before_update(ref self, from, to, amount);
 
-            let zero_address = Zero::zero();
+            let zero_address = starknet::contract_address_const::<0>();
             if (from == zero_address) {
                 let total_supply = self.ERC20_total_supply.read();
                 self.ERC20_total_supply.write(total_supply + amount);
@@ -276,8 +270,8 @@ pub mod ERC20Component {
             recipient: ContractAddress,
             amount: u256
         ) {
-            assert(!sender.is_zero(), Errors::TRANSFER_FROM_ZERO);
-            assert(!recipient.is_zero(), Errors::TRANSFER_TO_ZERO);
+            assert(sender != starknet::contract_address_const::<0>(), Errors::TRANSFER_FROM_ZERO);
+            assert(recipient != starknet::contract_address_const::<0>(), Errors::TRANSFER_TO_ZERO);
             self.update(sender, recipient, amount);
         }
 
@@ -296,8 +290,8 @@ pub mod ERC20Component {
             spender: ContractAddress,
             amount: u256
         ) {
-            assert(!owner.is_zero(), Errors::APPROVE_FROM_ZERO);
-            assert(!spender.is_zero(), Errors::APPROVE_TO_ZERO);
+            assert(owner != starknet::contract_address_const::<0>(), Errors::APPROVE_FROM_ZERO);
+            assert(spender != starknet::contract_address_const::<0>(), Errors::APPROVE_TO_ZERO);
             self.ERC20_allowances.write((owner, spender), amount);
             self.emit(Approval { owner, spender, value: amount });
         }
@@ -317,7 +311,7 @@ pub mod ERC20Component {
             amount: u256
         ) {
             let current_allowance = self.ERC20_allowances.read((owner, spender));
-            if current_allowance != Bounded::MAX {
+            if current_allowance != 340282366920938463463374607431768211455 {
                 assert(current_allowance >= amount, Errors::INSUFFICIENT_ALLOWANCE);
                 self._approve(owner, spender, current_allowance - amount);
             }
@@ -326,4 +320,18 @@ pub mod ERC20Component {
 }
 
 /// An empty implementation of the ERC20 hooks to be used in basic ERC20 preset contracts.
-pub impl ERC20HooksEmptyImpl<TContractState> of ERC20Component::ERC20HooksTrait<TContractState> {}
+pub impl ERC20HooksEmptyImpl<TContractState> of ERC20Component::ERC20HooksTrait<TContractState> {
+    fn before_update(
+        ref self: kudos::oz16::erc20::ERC20Component::ComponentState::<TContractState>,
+        from: starknet::ContractAddress,
+        recipient: starknet::ContractAddress,
+        amount: u256
+    ) -> () {}
+
+    fn after_update(
+        ref self: kudos::oz16::erc20::ERC20Component::ComponentState::<TContractState>,
+        from: starknet::ContractAddress,
+        recipient: starknet::ContractAddress,
+        amount: u256
+    ) -> () {}
+}
