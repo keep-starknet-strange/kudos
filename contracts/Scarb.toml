@@ -1,7 +1,7 @@
 [package]
 name = "kudos"
 version = "0.1.0"
-edition = "2024_07"
+edition = "2023_01"
 
 [scripts]
 test = "snforge test"
@@ -10,11 +10,10 @@ test = "snforge test"
 sort-module-level-items = true
 
 [dependencies]
-starknet = "2.8.2"
+starknet = "2.6.3"
 
 [dev-dependencies]
-assert_macros = "2.8.2"
-snforge_std = "0.30.0"
+snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry", tag = "v0.21.0" }
 
 [profile.dev.cairo]
 unstable-add-statements-functions-debug-info = true
