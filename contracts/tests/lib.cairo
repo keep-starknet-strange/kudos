@@ -9,7 +9,7 @@ use kudos::utils::constants::{
     ZERO_ADDRESS, RECEIVER, DUMMY, CREDENTIAL_HASH_BAD
 };
 use kudos::{Kudos, IKudosDispatcher, IKudosDispatcherTrait};
-use snforge_std::{spy_events, EventSpyAssertionsTrait, start_cheat_caller_address};
+use snforge_std::{CheatTarget, ContractClassTrait, spy_events, start_prank, EventAssertions};
 use utils::{setup, setup_registered, test_amount, test_description};
 
 #[test]
@@ -35,7 +35,7 @@ fn test_bad_erc20_metadata() {
 #[should_panic]
 fn test_erc20_no_transfer() {
     let token = IERC20Dispatcher { contract_address: setup_registered() };
-    start_cheat_caller_address(token.contract_address, CALLER());
+    snforge_std::start_prank(CheatTarget::One(token.contract_address), CALLER());
     token.transfer(RECEIVER(), 1);
 }
 
@@ -48,7 +48,7 @@ fn test_erc20_no_transfer_from() {
 
 #[test]
 fn test_register_sw_employee_mint() {
-    let mut spy = spy_events();
+    let mut spy = spy_events(snforge_std::cheatcodes::events::SpyOn::All);
 
     let token = IERC20Dispatcher { contract_address: setup_registered() };
     assert_eq!(token.balance_of(CALLER()), REGISTRATION_AMOUNT);
@@ -63,7 +63,7 @@ fn test_register_sw_employee_mint() {
 
 #[test]
 fn test_register_sw_employee_registered() {
-    let mut spy = spy_events();
+    let mut spy = spy_events(snforge_std::cheatcodes::events::SpyOn::All);
 
     let registry = ICredentialRegistryDispatcher { contract_address: setup_registered() };
     assert_eq!(registry.get_credential(CALLER()), CREDENTIAL_HASH);
@@ -81,10 +81,10 @@ fn test_register_sw_employee_registered() {
 
 #[test]
 fn test_give_kudos() {
-    let mut spy = spy_events();
+    let mut spy = spy_events(snforge_std::cheatcodes::events::SpyOn::All);
 
     let kudos = IKudosDispatcher { contract_address: setup_registered() };
-    start_cheat_caller_address(kudos.contract_address, CALLER());
+    start_prank(CheatTarget::One(kudos.contract_address), CALLER());
     kudos.give_kudos(test_amount(), CREDENTIAL_HASH, CREDENTIAL_HASH_2, test_description());
 
     assert_eq!(kudos.get_total_given(CALLER()), test_amount());
@@ -105,7 +105,7 @@ fn test_give_kudos() {
 #[should_panic(expected: 'Sender not registered')]
 fn test_give_kudos_sender_unregistered() {
     let kudos = IKudosDispatcher { contract_address: setup_registered() };
-    start_cheat_caller_address(kudos.contract_address, DUMMY());
+    start_prank(CheatTarget::One(kudos.contract_address), DUMMY());
     kudos.give_kudos(test_amount(), CREDENTIAL_HASH, CREDENTIAL_HASH_2, test_description());
 }
 
@@ -113,6 +113,6 @@ fn test_give_kudos_sender_unregistered() {
 #[should_panic(expected: 'Receiver not registered')]
 fn test_give_kudos_receiver_unregistered() {
     let kudos = IKudosDispatcher { contract_address: setup_registered() };
-    start_cheat_caller_address(kudos.contract_address, CALLER());
+    start_prank(CheatTarget::One(kudos.contract_address), CALLER());
     kudos.give_kudos(test_amount(), CREDENTIAL_HASH, CREDENTIAL_HASH_BAD, test_description());
 }

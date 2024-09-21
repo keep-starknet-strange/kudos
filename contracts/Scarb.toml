@@ -21,3 +21,5 @@ unstable-add-statements-code-locations-debug-info = true
 inlining-strategy= "avoid"
 
 [[target.starknet-contract]]
+casm = true
+sierra = true
