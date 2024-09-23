@@ -30,8 +30,8 @@ if [[ $1 == "--clean" ]]; then
 fi
 
 ACCOUNT_NAME=kudos_acct
-ACCOUNT_ADDRESS=0x328ced46664355fc4b885ae7011af202313056a7e3d44827fb24c9d3206aaa0
-ACCOUNT_PRIVATE_KEY=0x856c96eaa4e7c40c715ccc5dacd8bf6e
+ACCOUNT_ADDRESS=0x5c4549135a90e405681b6856a47b4269d6c6da78958360592fed61f84bdbf82
+ACCOUNT_PRIVATE_KEY=0xce8226b9a31822c1530c153555d4b1ab
 ACCOUNT_PROFILE=starknet-devnet
 ACCOUNT_FILE=$TMP_DIR/starknet_accounts.json
 
@@ -49,30 +49,33 @@ ACCOUNT_FILE=$TMP_DIR/starknet_accounts.json
 # else
 #     echo "Account '$ACCOUNT_NAME' already exists. Skipping addition."
 # fi
-echo "sncast --accounts-file $ACCOUNT_FILE account add --url $RPC_URL --name $ACCOUNT_NAME --address $ACCOUNT_ADDRESS --private-key $ACCOUNT_PRIVATE_KEY"
+echo "sncast --url $RPC_URL --accounts-file $ACCOUNT_FILE account add --name $ACCOUNT_NAME --address $ACCOUNT_ADDRESS --private-key $ACCOUNT_PRIVATE_KEY"
 
 
-sncast --accounts-file $ACCOUNT_FILE account add --url $RPC_URL --class-hash 0x61dac032f228abef9c6626f995015233097ae253a7f72d68552db02f2971b8f --name $ACCOUNT_NAME --address $ACCOUNT_ADDRESS --private-key $ACCOUNT_PRIVATE_KEY --type oz
+sncast --url $RPC_URL --accounts-file $ACCOUNT_FILE account add --name $ACCOUNT_NAME --address $ACCOUNT_ADDRESS --private-key $ACCOUNT_PRIVATE_KEY
 
 CONTRACT_DIR="$WORK_DIR/contracts/src"
 KUDOS_CLASS_NAME="Kudos"
 
 # Declare the contract
 
-echo "sncast --accounts-file $ACCOUNT_FILE --account $ACCOUNT_NAME --wait --json declare --contract-name $KUDOS_CLASS_NAME --url $RPC_URL --version v3"
+echo "sncast --url $RPC_URL --accounts-file $ACCOUNT_FILE --account $ACCOUNT_NAME --wait --json declare --contract-name $KUDOS_CLASS_NAME"
 
-KUDOS_CLASS_DECLARE_RESULT=$(cd $CONTRACT_DIR && sncast --accounts-file $ACCOUNT_FILE --account $ACCOUNT_NAME --wait --json declare --contract-name $KUDOS_CLASS_NAME --url $RPC_URL --version v3| tail -n 1)
+KUDOS_CLASS_DECLARE_RESULT=$(cd $CONTRACT_DIR &&  sncast --url $RPC_URL --accounts-file $ACCOUNT_FILE --account $ACCOUNT_NAME --wait --json declare --contract-name $KUDOS_CLASS_NAME | tail -n 1)
 echo $KUDOS_CLASS_DECLARE_RESULT
-KUDOS_CLASS_HASH=$(echo $KUDOS_CLASS_DECLARE_RESULT | jq -r '.class_hash')
+KUDOS_CLASS_HASH=0x07731dced1a83098d7d197cddfa603eba26e0ec86005e37dfa26d96c8571e145
 echo "Declared class \"$KUDOS_CLASS_NAME\" with hash $KUDOS_CLASS_HASH"
 
 # Define constructor parameters
-TOKEN_NAME="KUK"
-TOKEN_SYMBOL="KUDOS"
+TOKEN_NAME=420
+TOKEN_SYMBOL=69
 
 # Deploy the contract
 CALLDATA=$(echo -n $TOKEN_NAME $TOKEN_SYMBOL)
+
 echo "Deploying contract \"$KUDOS_CLASS_NAME\"..."
+
+echo "sncast --accounts-file $ACCOUNT_FILE --account $ACCOUNT_NAME --wait --json deploy --class-hash $KUDOS_CLASS_HASH --constructor-calldata $CALLDATA"
 KUDOS_CONTRACT_DEPLOY_RESULT=$(sncast --accounts-file $ACCOUNT_FILE --account $ACCOUNT_NAME --wait --json deploy --class-hash $KUDOS_CLASS_HASH --constructor-calldata $CALLDATA | tail -n 1)
 KUDOS_CONTRACT_ADDRESS=$(echo $KUDOS_CONTRACT_DEPLOY_RESULT | jq -r '.contract_address')
 echo "Deployed contract \"$KUDOS_CLASS_NAME\" with address $KUDOS_CONTRACT_ADDRESS"
