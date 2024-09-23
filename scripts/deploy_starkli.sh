@@ -5,7 +5,7 @@ RPC_PORT=5050
 RPC_URL=http://$RPC_HOST:$RPC_PORT
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-PROJECT_ROOT=$SCRIPT_DIR/../
+PROJECT_ROOT=$SCRIPT_DIR/..
 
 # Load env variable from `.env` only if they're not already set
 if [ -z "$STARKNET_KEYSTORE" ] || [ -z "$STARKNET_ACCOUNT" ]; then
@@ -78,13 +78,12 @@ cd $ONCHAIN_DIR && scarb build
 # Declaring the contract
 echo "Declaring the contract..."
 
-USERNAME_STORE_DECLARE_OUTPUT=$(starkli declare --private-key $ACCOUNT_PRIVATE_KEY --watch $USERNAME_STORE_SIERRA_FILE --rpc $RPC_URL --account /Users/zackwilliams/Development/kudos/test.json --casm-hash 0x045e53856dbfc9a9d343a1cc1724d13f5d8bdc9c6a68465485a3e58203b22549 2>&1)
-echo starkli declare --private-key $ACCOUNT_PRIVATE_KEY --watch $USERNAME_STORE_SIERRA_FILE --rpc $RPC_URL --account /Users/zackwilliams/Development/kudos/test.json --casm-hash 0x045e53856dbfc9a9d343a1cc1724d13f5d8bdc9c6a68465485a3e58203b22549
-
+USERNAME_STORE_DECLARE_OUTPUT=$(starkli declare --private-key $ACCOUNT_PRIVATE_KEY --watch $USERNAME_STORE_SIERRA_FILE --rpc $RPC_URL --account /Users/zackwilliams/Development/kudos/test.json 2>&1)
+echo starkli declare --private-key $ACCOUNT_PRIVATE_KEY --watch $USERNAME_STORE_SIERRA_FILE --rpc $RPC_URL --account /Users/zackwilliams/Development/kudos/test.json
 USERNAME_STORE_CONTRACT_CLASSHASH=$(echo $USERNAME_STORE_DECLARE_OUTPUT | tail -n 1 | awk '{print $NF}')
 echo "Contract class hash: $USERNAME_STORE_CONTRACT_CLASSHASH"
 
 # Deploying the contract
 echo "Deploying the contract..."
-echo "starkli deploy --network sepolia --keystore $STARKNET_KEYSTORE --account $STARKNET_ACCOUNT --watch $USERNAME_STORE_CONTRACT_CLASSHASH"
-starkli deploy --network sepolia --keystore $STARKNET_KEYSTORE --account $STARKNET_ACCOUNT --watch $USERNAME_STORE_CONTRACT_CLASSHASH
+echo "starkli deploy --network sepolia --keystore $STARKNET_KEYSTORE --account /Users/zackwilliams/Development/kudos/test.json --watch $USERNAME_STORE_CONTRACT_CLASSHASH"
+starkli deploy --network sepolia --keystore $STARKNET_KEYSTORE --account /Users/zackwilliams/Development/kudos/test.json --watch $USERNAME_STORE_CONTRACT_CLASSHASH
