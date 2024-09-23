@@ -83,17 +83,17 @@ pub mod CredentialRegistryComponent {
         fn _register_credential(
             ref self: ComponentState<TContractState>, hash: felt252, address: ContractAddress
         ) {
-            assert(self.credentials.read(hash) == starknet::contract_address_const::<0>(), Errors::CREDENTIAL_DUPLICATE);
+            assert(
+                self.credentials.read(hash) == starknet::contract_address_const::<0>(),
+                Errors::CREDENTIAL_DUPLICATE
+            );
 
             self.credentials.write(hash, address);
         }
         fn _register_user(
             ref self: ComponentState<TContractState>, address: ContractAddress, hash: felt252
         ) {
-            assert(
-                self.address_to_credential.read(address) == 0,
-                Errors::ADDRESS_DUPLICATE
-            );
+            assert(self.address_to_credential.read(address) == 0, Errors::ADDRESS_DUPLICATE);
 
             self.address_to_credential.write(address, hash);
         }

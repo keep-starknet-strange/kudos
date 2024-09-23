@@ -36,7 +36,9 @@ pub fn setup_registered() -> ContractAddress {
     snforge_std::start_prank(snforge_std::cheatcodes::CheatTarget::One(contract_address), CALLER());
     kudos_contract.register_sw_employee(CREDENTIAL_HASH);
 
-    snforge_std::start_prank(snforge_std::cheatcodes::CheatTarget::One(contract_address), RECEIVER());
+    snforge_std::start_prank(
+        snforge_std::cheatcodes::CheatTarget::One(contract_address), RECEIVER()
+    );
     kudos_contract.register_sw_employee(CREDENTIAL_HASH_2);
 
     contract_address
