@@ -69,7 +69,6 @@ done
 
 ONCHAIN_DIR=$PROJECT_ROOT/contracts
 USERNAME_STORE_SIERRA_FILE=$ONCHAIN_DIR/target/dev/kudos_Kudos.contract_class.json
-/Users/zackwilliams/.kudos/tmp/1727114185/starknet_accounts.json
 
 # Build the contract
 echo "Building the contract..."
@@ -85,6 +84,13 @@ USERNAME_STORE_CONTRACT_CLASSHASH=$(echo $USERNAME_STORE_DECLARE_OUTPUT | tail -
 echo "Contract class hash: $USERNAME_STORE_CONTRACT_CLASSHASH"
 
 # Deploying the contract
+# Define constructor parameters
+TOKEN_NAME="Kudos"
+TOKEN_SYMBOL="KDS"
+
+# Deploy the contract
+CALLDATA=$(echo -n str:$TOKEN_NAME str:$TOKEN_SYMBOL)
+echo "call data $CALLDATA"
 echo "Deploying the contract..."
-echo "starkli deploy --network sepolia --keystore $STARKNET_KEYSTORE --account /Users/zackwilliams/Development/kudos/test.json --watch $USERNAME_STORE_CONTRACT_CLASSHASH"
-starkli deploy --network sepolia --keystore $STARKNET_KEYSTORE --account /Users/zackwilliams/Development/kudos/test.json --watch $USERNAME_STORE_CONTRACT_CLASSHASH
+echo "starkli deploy --network sepolia --watch $USERNAME_STORE_CONTRACT_CLASSHASH --private-key $ACCOUNT_PRIVATE_KEY --account /Users/zackwilliams/Development/kudos/test.json $USERNAME_STORE_CONTRACT_CLASSHASH $CALLDATA"
+starkli deploy --network sepolia  --watch $USERNAME_STORE_CONTRACT_CLASSHASH --private-key $ACCOUNT_PRIVATE_KEY --account /Users/zackwilliams/Development/kudos/test.json $USERNAME_STORE_CONTRACT_CLASSHASH 0x01 0x01 0x68656c6c6f 0x05
