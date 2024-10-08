@@ -35,7 +35,6 @@ ACCOUNT_PRIVATE_KEY=0x856c96eaa4e7c40c715ccc5dacd8bf6e
 ACCOUNT_PROFILE=starknet-devnet
 ACCOUNT_FILE=$TMP_DIR/starknet_accounts.json
 
-
 # # Create the accounts file if it doesn't exist
 # if [ ! -f "$ACCOUNT_FILE" ]; then
 #     echo "Creating accounts file..."
@@ -62,17 +61,19 @@ KUDOS_CLASS_NAME="Kudos"
 echo "sncast --accounts-file $ACCOUNT_FILE --account $ACCOUNT_NAME --wait --json declare --contract-name $KUDOS_CLASS_NAME --url $RPC_URL --version v3"
 
 KUDOS_CLASS_DECLARE_RESULT=$(cd $CONTRACT_DIR && sncast --accounts-file $ACCOUNT_FILE --account $ACCOUNT_NAME --wait --json declare --contract-name $KUDOS_CLASS_NAME --url $RPC_URL --version v3| tail -n 1)
+echo "sncast --accounts-file $ACCOUNT_FILE --account $ACCOUNT_NAME --wait --json declare --contract-name $KUDOS_CLASS_NAME --url $RPC_URL --version v3"
 echo $KUDOS_CLASS_DECLARE_RESULT
 KUDOS_CLASS_HASH=$(echo $KUDOS_CLASS_DECLARE_RESULT | jq -r '.class_hash')
 echo "Declared class \"$KUDOS_CLASS_NAME\" with hash $KUDOS_CLASS_HASH"
 
 # Define constructor parameters
-TOKEN_NAME="KudosToken"
-TOKEN_SYMBOL="KUDOS"
+TOKEN_NAME="0x0 0x324092063603 0x5"
+TOKEN_SYMBOL="0x0 0x4932691 0x3"
 
 # Deploy the contract
 CALLDATA=$(echo -n $TOKEN_NAME $TOKEN_SYMBOL)
 echo "Deploying contract \"$KUDOS_CLASS_NAME\"..."
-KUDOS_CONTRACT_DEPLOY_RESULT=$(sncast --accounts-file $ACCOUNT_FILE --account $ACCOUNT_NAME --wait --json deploy --class-hash $KUDOS_CLASS_HASH --constructor-calldata $CALLDATA | tail -n 1)
+KUDOS_CONTRACT_DEPLOY_RESULT=$(sncast --accounts-file $ACCOUNT_FILE --account $ACCOUNT_NAME --wait --json deploy --class-hash $KUDOS_CLASS_HASH --constructor-calldata $CALLDATA --url $RPC_URL --version v3 | tail -n 1)
+echo "sncast --accounts-file $ACCOUNT_FILE --account $ACCOUNT_NAME --wait --json deploy --class-hash 0x00103e59a45d084bb4d37a32d7a5dcb6a5525b1d8f0511b411e3340ed03c8aae --constructor-calldata $CALLDATA --url $RPC_URL --version v3"
 KUDOS_CONTRACT_ADDRESS=$(echo $KUDOS_CONTRACT_DEPLOY_RESULT | jq -r '.contract_address')
 echo "Deployed contract \"$KUDOS_CLASS_NAME\" with address $KUDOS_CONTRACT_ADDRESS"

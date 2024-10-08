@@ -21,16 +21,6 @@ fi
 #   exit 1
 # fi
 
-# TODO: Host & ...
-display_help() {
-  echo "Usage: $0 [option...]"
-  echo
-  echo "   -h, --help                               display help"
-
-  echo
-  echo "Example: $0 --host 0x0"
-}
-
 # Transform long options to short ones
 for arg in "$@"; do
   shift
