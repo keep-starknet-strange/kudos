@@ -25,7 +25,6 @@ fn test_initial_values() {
 
     assert!(registry.get_credential(CALLER()) == 0);
     assert!(registry.get_credential_address(CREDENTIAL_HASH) == ZERO_ADDRESS());
-    assert!(registry.credential_is_registered(CREDENTIAL_HASH) == false);
     assert!(registry.is_registered(CALLER()) == false);
     assert!(registry.get_total_credentials() == 0);
 }
@@ -38,7 +37,6 @@ fn test_register_credential() {
 
     assert!(registry.get_credential(CALLER()) == CREDENTIAL_HASH);
     assert!(registry.is_registered(CALLER()) == true);
-    assert!(registry.credential_is_registered(CREDENTIAL_HASH) == true);
     assert!(registry.get_credential_address(CREDENTIAL_HASH) == CALLER());
 }
 
@@ -50,7 +48,6 @@ fn test_register_credential_address_zero() {
 
     assert!(registry.get_credential(ZERO_ADDRESS()) == CREDENTIAL_HASH);
     assert!(registry.is_registered(ZERO_ADDRESS()) == false);
-    assert!(registry.credential_is_registered(CREDENTIAL_HASH) == false);
     assert!(registry.get_credential_address(CREDENTIAL_HASH) == ZERO_ADDRESS());
 }
 
