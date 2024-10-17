@@ -85,10 +85,7 @@ pub mod CredentialRegistryComponent {
             };
 
             let registered_credential = self.address_to_credential.entry(address).read();
-            if registered_credential.is_zero() {
-                return false;
-            };
-
+      
             registered_credential == hash
         }
     }
