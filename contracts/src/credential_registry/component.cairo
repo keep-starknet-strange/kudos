@@ -77,20 +77,6 @@ pub mod CredentialRegistryComponent {
 
             registered_address == address
         }
-
-        fn credential_is_registered(self: @ComponentState<TContractState>, hash: felt252) -> bool {
-            let address = self.credentials.entry(hash).read();
-            if address.is_zero() {
-                return false;
-            };
-
-            let registered_credential = self.address_to_credential.entry(address).read();
-            if registered_credential.is_zero() {
-                return false;
-            };
-
-            registered_credential == hash
-        }
     }
 
     #[generate_trait]
