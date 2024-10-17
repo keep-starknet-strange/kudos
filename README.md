@@ -41,3 +41,6 @@ Check out the [installation](https://github.com/software-mansion/cairo-coverage#
 cd contracts && snforge test --coverage
 ```
 
+***Deploy Contract to Testnet***
+
+* define values in env.example

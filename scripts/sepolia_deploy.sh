@@ -2,20 +2,33 @@
 # Abort the script on any error
 set -euo pipefail
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+echo $SCRIPT_DIR
+PROJECT_ROOT=$SCRIPT_DIR/..
+
+
+
 # Check for required commands
 command -v starkli >/dev/null 2>&1 || { echo >&2 "starkli not found. Aborting."; exit 1; }
 command -v scarb >/dev/null 2>&1 || { echo >&2 "scarb not found. Aborting."; exit 1; }
 
+# Configurable environment variables
+source $PROJECT_ROOT/.env
+: "${RPC_URL:=https://starknet-sepolia.public.blastapi.io/rpc/v0_7}"
+: "${ACCOUNT_PRIVATE_KEY:=ACCOUNT_PRIVATE_KEY is not set}"
+: "${ACCOUNT_ADDRESS:?ACCOUNT_ADDRESS is not set}"
+: "${TOKEN_NAME:?TOKEN_NAME is not set}"
+: "${TOKEN_SYMBOL:?TOKEN_SYMBOL is not set}"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 PROJECT_ROOT=$SCRIPT_DIR/..
 ONCHAIN_DIR=$PROJECT_ROOT/contracts
 KUDOS_SIERRA_FILE=$ONCHAIN_DIR/target/dev/kudos_Kudos.contract_class.json
 
 # Ensure tmp directory exists
-mkdir -p $TMP_DIR
+mkdir -p /tmp
 
 # Set account file path within the project tmp directory
-ACCOUNT_FILE=$TMP_DIR/starknet_accounts.json
+ACCOUNT_FILE=/tmp/starknet_accounts.json
 
 starkli account fetch $ACCOUNT_ADDRESS \
       --rpc $RPC_URL \
@@ -53,13 +66,15 @@ echo "starkli deploy --rpc $RPC_URL --network sepolia --private-key $ACCOUNT_PRI
 KUDOS_DEPLOY_OUTPUT=$(starkli deploy --rpc $RPC_URL --network sepolia --private-key $ACCOUNT_PRIVATE_KEY --fee-token STRK --account $ACCOUNT_FILE $KUDOS_CONTRACT_CLASSHASH $CALLDATA)
 echo $KUDOS_DEPLOY_OUTPUT
 
-KUDOS_CONTRACT_ADDRESS=$(echo "$KUDOS_DEPLOY_OUTPUT" | grep -oP '(?<=Contract address: )\w+')
+# Extract the contract address using grep
+KUDOS_CONTRACT_ADDRESS=$(echo "$KUDOS_DEPLOY_OUTPUT" | grep -oE '0x[0-9a-fA-F]{64}')
 
+
+echo "Kudos contract address: $KUDOS_CONTRACT_ADDRESS"
 if [ -z "$KUDOS_CONTRACT_ADDRESS" ]; then
   echo "Error: Failed to retrieve Kudos contract address."
   exit 1
 fi
-
 # Export the contract address as an environment variable
 export KUDOS_CONTRACT_ADDRESS=$KUDOS_CONTRACT_ADDRESS
 echo "Environment variable KUDOS_CONTRACT_ADDRESS set to: $KUDOS_CONTRACT_ADDRESS"
