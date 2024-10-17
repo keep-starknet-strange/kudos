@@ -1,5 +1,3 @@
-.env
-
 # `snfoundry` artifacts 
 contracts/target
 contracts/.snfoundry_cache/
@@ -11,3 +9,5 @@ contracts/coverage
 
 # `mac`
 **/.DS_Store
+
+.env
