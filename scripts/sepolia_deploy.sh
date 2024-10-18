@@ -75,6 +75,3 @@ if [ -z "$KUDOS_CONTRACT_ADDRESS" ]; then
   echo "Error: Failed to retrieve Kudos contract address."
   exit 1
 fi
-# Export the contract address as an environment variable
-export KUDOS_CONTRACT_ADDRESS=$KUDOS_CONTRACT_ADDRESS
-echo "Environment variable KUDOS_CONTRACT_ADDRESS set to: $KUDOS_CONTRACT_ADDRESS"
