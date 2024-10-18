@@ -6,7 +6,8 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 echo $SCRIPT_DIR
 PROJECT_ROOT=$SCRIPT_DIR/..
 
-
+# Ensure tmp directory exists
+mkdir -p $ONCHAIN_DIR/target/tmp
 
 # Check for required commands
 command -v starkli >/dev/null 2>&1 || { echo >&2 "starkli not found. Aborting."; exit 1; }
@@ -19,13 +20,9 @@ source $PROJECT_ROOT/.env
 : "${ACCOUNT_ADDRESS:?ACCOUNT_ADDRESS is not set}"
 : "${TOKEN_NAME:?TOKEN_NAME is not set}"
 : "${TOKEN_SYMBOL:?TOKEN_SYMBOL is not set}"
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-PROJECT_ROOT=$SCRIPT_DIR/..
 ONCHAIN_DIR=$PROJECT_ROOT/contracts
 KUDOS_SIERRA_FILE=$ONCHAIN_DIR/target/dev/kudos_Kudos.contract_class.json
 
-# Ensure tmp directory exists
-mkdir -p /tmp
 
 # Set account file path within the project tmp directory
 ACCOUNT_FILE=/tmp/starknet_accounts.json
@@ -40,7 +37,6 @@ echo "starkli account fetch $ACCOUNT_ADDRESS \
       --network sepolia --force \
       --output $ACCOUNT_FILE \
 "
-
 
 # Build the contract
 echo "Building the contract..."
@@ -57,7 +53,6 @@ echo "Contract class hash: $KUDOS_CONTRACT_CLASSHASH"
 
 # Deploying the contract
 echo "Deploying the contract..."
-# Define constructor parameters
 
 # Deploy the contract
 CALLDATA=$(echo -n $TOKEN_NAME $TOKEN_SYMBOL)

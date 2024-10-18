@@ -27,4 +27,3 @@ vendor = "nethermind"
 
 [[target.starknet-contract]]
 casm = true
-sierra = true
