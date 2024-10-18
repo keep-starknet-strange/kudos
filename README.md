@@ -43,9 +43,6 @@ cd contracts && snforge test --coverage
 
 ***Deploy Contract to Testnet***
 
-* define values in env.example
-
 ```bash
 scripts/sepolia_deploy.sh
 ```
-sets KUDOS_CONTRACT_ADDRESS evironment variable to deployed contract address
