@@ -12,6 +12,7 @@ type Config struct {
 	ContractAddress string
 	SlackToken      string
 	SlackWebhookURL string
+	BlastProjectId  string
 }
 
 func LoadConfig() (*Config, error) {
@@ -25,5 +26,6 @@ func LoadConfig() (*Config, error) {
 		StarkNetRPCURL:  os.Getenv("STARKNET_RPC_URL"),
 		ContractAddress: os.Getenv("CONTRACT_ADDRESS"),
 		SlackWebhookURL: os.Getenv("SLACK_WEBHOOK_URL"),
+		BlastProjectId:  os.Getenv("BLAST_PROJECT_ID"),
 	}, nil
 }
