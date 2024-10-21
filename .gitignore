@@ -11,3 +11,5 @@ slack-app/dist
 slack-app/package
 slack-app/.DS_Store
 slack-app/.slack/apps.dev.json
+
+.env
