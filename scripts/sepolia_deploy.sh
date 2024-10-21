@@ -22,9 +22,6 @@ source $PROJECT_ROOT/.env
 : "${TOKEN_SYMBOL:?TOKEN_SYMBOL is not set}"
 ONCHAIN_DIR=$PROJECT_ROOT/contracts
 KUDOS_SIERRA_FILE=$ONCHAIN_DIR/target/dev/kudos_Kudos.contract_class.json
-
-
-# Set account file path within the project target/tmp directory
 ACCOUNT_FILE=$ONCHAIN_DIR/target/tmp/starknet_accounts.json
 
 starkli account fetch $ACCOUNT_ADDRESS \
