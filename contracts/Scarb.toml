@@ -21,4 +21,9 @@ unstable-add-statements-functions-debug-info = true
 unstable-add-statements-code-locations-debug-info = true
 inlining-strategy= "avoid"
 
+[default.networks.sepolia.provider]
+type = "free"
+vendor = "nethermind"
+
 [[target.starknet-contract]]
+casm = true

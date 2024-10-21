@@ -41,3 +41,8 @@ Check out the [installation](https://github.com/software-mansion/cairo-coverage#
 cd contracts && snforge test --coverage
 ```
 
+***Deploy Contract to Testnet***
+
+```bash
+scripts/sepolia_deploy.sh
+```

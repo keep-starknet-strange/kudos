@@ -9,3 +9,5 @@ contracts/coverage
 
 # `mac`
 **/.DS_Store
+
+.env
