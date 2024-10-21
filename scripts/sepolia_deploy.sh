@@ -61,7 +61,6 @@ echo $KUDOS_DEPLOY_OUTPUT
 # Extract the contract address using grep
 KUDOS_CONTRACT_ADDRESS=$(echo "$KUDOS_DEPLOY_OUTPUT" | grep -oE '0x[0-9a-fA-F]{64}')
 
-
 echo "Kudos contract address: $KUDOS_CONTRACT_ADDRESS"
 if [ -z "$KUDOS_CONTRACT_ADDRESS" ]; then
   echo "Error: Failed to retrieve Kudos contract address."
