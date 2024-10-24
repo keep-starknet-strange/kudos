@@ -21,13 +21,13 @@ fn test_erc20_metadata() {
     assert_eq!(token.decimals(), DECIMALS);
     assert_eq!(token.total_supply(), 0);
 }
-
+ 
 #[test]
 fn test_bad_erc20_metadata() {
     let token = IERC20Dispatcher { contract_address: setup() };
 
-    assert!(token.name() != "WRONG_NAME");
-    assert!(token.symbol() != "WRONG_SYMBOL");
+    assert!(token.name() != 42);
+    assert!(token.symbol() != 42);
     assert!(token.decimals() != 0);
 }
 

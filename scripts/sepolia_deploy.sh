@@ -53,6 +53,7 @@ echo "Deploying the contract..."
 
 # Deploy the contract
 CALLDATA=$(echo -n $TOKEN_NAME $TOKEN_SYMBOL)
+echo "CALLDATA  $CALLDATA"
 echo "starkli deploy --rpc $RPC_URL --network sepolia --private-key $ACCOUNT_PRIVATE_KEY --fee-token STRK --account $ACCOUNT_FILE $KUDOS_CONTRACT_CLASSHASH $CALLDATA"
 
 KUDOS_DEPLOY_OUTPUT=$(starkli deploy --rpc $RPC_URL --network sepolia --private-key $ACCOUNT_PRIVATE_KEY --fee-token STRK --account $ACCOUNT_FILE $KUDOS_CONTRACT_CLASSHASH $CALLDATA)

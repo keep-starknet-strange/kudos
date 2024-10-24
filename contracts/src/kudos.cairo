@@ -60,7 +60,7 @@ pub mod Kudos {
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, name: ByteArray, symbol: ByteArray) {
+    fn constructor(ref self: ContractState, name: felt252, symbol: felt252) {
         self.erc20.initializer(name, symbol);
     }
 
@@ -107,10 +107,10 @@ pub mod Kudos {
 
     #[abi(embed_v0)]
     impl ERC20ReadOnly of IERC20ReadOnly<ContractState> {
-        fn name(self: @ContractState) -> ByteArray {
+        fn name(self: @ContractState) -> felt252 {
             self.erc20.name()
         }
-        fn symbol(self: @ContractState) -> ByteArray {
+        fn symbol(self: @ContractState) -> felt252 {
             self.erc20.symbol()
         }
         fn decimals(self: @ContractState) -> u8 {

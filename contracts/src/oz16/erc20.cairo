@@ -24,8 +24,8 @@ pub mod ERC20Component {
 
     #[storage]
     pub struct Storage {
-        pub ERC20_name: ByteArray,
-        pub ERC20_symbol: ByteArray,
+        pub ERC20_name: felt252,
+        pub ERC20_symbol: felt252,
         pub ERC20_total_supply: u256,
         pub ERC20_balances: Map<ContractAddress, u256>,
         pub ERC20_allowances: Map<(ContractAddress, ContractAddress), u256>,
@@ -99,12 +99,12 @@ pub mod ERC20Component {
         TContractState, +HasComponent<TContractState>, +ERC20HooksTrait<TContractState>
     > of IERC20<ComponentState<TContractState>> {
         /// Returns the name of the token.
-        fn name(self: @ComponentState<TContractState>) -> ByteArray {
+        fn name(self: @ComponentState<TContractState>) -> felt252 {
             self.ERC20_name.read()
         }
 
         /// Returns the ticker symbol of the token, usually a shorter version of the name.
-        fn symbol(self: @ComponentState<TContractState>) -> ByteArray {
+        fn symbol(self: @ComponentState<TContractState>) -> felt252 {
             self.ERC20_symbol.read()
         }
 
@@ -189,7 +189,7 @@ pub mod ERC20Component {
         /// To prevent reinitialization, this should only be used inside of a contract's
         /// constructor.
         fn initializer(
-            ref self: ComponentState<TContractState>, name: ByteArray, symbol: ByteArray
+            ref self: ComponentState<TContractState>, name: felt252, symbol: felt252
         ) {
             self.ERC20_name.write(name);
             self.ERC20_symbol.write(symbol);

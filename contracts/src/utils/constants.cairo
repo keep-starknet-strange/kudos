@@ -24,12 +24,12 @@ pub const DECIMALS: u8 = 18;
 pub const ONE: u256 = 1_000_000_000_000_000_000;
 pub const REGISTRATION_AMOUNT: u256 = 1_000_000_000_000_000_000_000;
 
-pub fn NAME() -> ByteArray {
-    "Kudos"
+pub fn NAME() -> felt252 {
+    324092063603
 }
 
-pub fn SYMBOL() -> ByteArray {
-    "KUDOS"
+pub fn SYMBOL() -> felt252 {
+    323553087315
 }
 
 //
