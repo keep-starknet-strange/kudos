@@ -10,11 +10,11 @@ test = "snforge test"
 sort-module-level-items = true
 
 [dependencies]
-starknet = "2.8.2"
+starknet = "2.8.5"
 
 [dev-dependencies]
-assert_macros = "2.8.2"
-snforge_std = "0.30.0"
+assert_macros = "2.8.5"
+snforge_std = "0.33.0"
 
 [profile.dev.cairo]
 unstable-add-statements-functions-debug-info = true
