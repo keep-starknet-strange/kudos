@@ -21,6 +21,11 @@ unstable-add-statements-functions-debug-info = true
 unstable-add-statements-code-locations-debug-info = true
 inlining-strategy= "avoid"
 
+[profile.release.cairo]
+unstable-add-statements-functions-debug-info = true
+unstable-add-statements-code-locations-debug-info = true
+inlining-strategy= "avoid"
+
 [default.networks.sepolia.provider]
 type = "free"
 vendor = "nethermind"
