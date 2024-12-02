@@ -25,7 +25,7 @@ pub mod oz16 {
     mod interfaces;
     pub use interfaces::{
         IERC20, IERC20Dispatcher, IERC20DispatcherTrait, IOwnable, IOwnableDispatcher,
-        IOwnableDispatcherTrait, IERC20ReadOnly
+        IOwnableDispatcherTrait, IERC20ReadOnly, IERC20CamelOnly
     };
 }
 

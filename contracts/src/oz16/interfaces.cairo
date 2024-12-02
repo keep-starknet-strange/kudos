@@ -28,6 +28,12 @@ pub trait IERC20ReadOnly<TState> {
 }
 
 #[starknet::interface]
+pub trait IERC20CamelOnly<TState> {
+    fn totalSupply(self: @TState) -> u256;
+    fn balanceOf(self: @TState, account: ContractAddress) -> u256;
+}
+
+#[starknet::interface]
 pub trait IOwnable<TState> {
     fn owner(self: @TState) -> ContractAddress;
     fn transfer_ownership(ref self: TState, new_owner: ContractAddress);

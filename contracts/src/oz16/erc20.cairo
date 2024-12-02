@@ -15,6 +15,7 @@ pub mod ERC20Component {
     use core::num::traits::Bounded;
     use core::num::traits::Zero;
     use kudos::oz16::IERC20;
+    use kudos::oz16::IERC20CamelOnly;
     use starknet::ContractAddress;
     use starknet::get_caller_address;
     use starknet::storage::{
@@ -174,6 +175,20 @@ pub mod ERC20Component {
             let caller = get_caller_address();
             self._approve(caller, spender, amount);
             true
+        }
+    }
+
+    /// Adds camelCase support for `IERC20`.
+    #[embeddable_as(ERC20CamelOnlyImpl)]
+    impl ERC20CamelOnly<
+        TContractState, +HasComponent<TContractState>, +ERC20HooksTrait<TContractState>
+    > of IERC20CamelOnly<ComponentState<TContractState>> {
+        fn totalSupply(self: @ComponentState<TContractState>) -> u256 {
+            ERC20::total_supply(self)
+        }
+
+        fn balanceOf(self: @ComponentState<TContractState>, account: ContractAddress) -> u256 {
+            ERC20::balance_of(self, account)
         }
     }
 
