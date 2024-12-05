@@ -10,7 +10,7 @@ use kudos::utils::constants::{
 };
 use kudos::{Kudos, IKudosDispatcher, IKudosDispatcherTrait};
 use snforge_std::{spy_events, EventSpyAssertionsTrait, start_cheat_caller_address};
-use utils::{setup, setup_registered, test_amount, test_description};
+use utils::{setup, setup_registered, test_description, one};
 
 #[test]
 fn test_erc20_metadata() {
@@ -85,16 +85,15 @@ fn test_give_kudos() {
 
     let kudos = IKudosDispatcher { contract_address: setup_registered() };
     start_cheat_caller_address(kudos.contract_address, CALLER());
-    kudos.give_kudos(test_amount(), CREDENTIAL_HASH, CREDENTIAL_HASH_2, test_description());
+    kudos.give_kudos(CREDENTIAL_HASH, CREDENTIAL_HASH_2, test_description());
 
-    assert_eq!(kudos.get_total_given(CALLER()), test_amount());
-    assert_eq!(kudos.get_total_received(RECEIVER()), test_amount());
+    assert_eq!(kudos.get_total_given(CALLER()), one());
+    assert_eq!(kudos.get_total_received(RECEIVER()), one());
 
     let expected_kudos_event = Kudos::Event::KudosGiven(
         Kudos::KudosGiven {
             sender: CALLER(),
             receiver: RECEIVER(),
-            amount: test_amount(),
             description: test_description()
         }
     );
@@ -106,7 +105,7 @@ fn test_give_kudos() {
 fn test_give_kudos_sender_unregistered() {
     let kudos = IKudosDispatcher { contract_address: setup_registered() };
     start_cheat_caller_address(kudos.contract_address, DUMMY());
-    kudos.give_kudos(test_amount(), CREDENTIAL_HASH, CREDENTIAL_HASH_2, test_description());
+    kudos.give_kudos(CREDENTIAL_HASH, CREDENTIAL_HASH_2, test_description());
 }
 
 #[test]
@@ -114,5 +113,5 @@ fn test_give_kudos_sender_unregistered() {
 fn test_give_kudos_receiver_unregistered() {
     let kudos = IKudosDispatcher { contract_address: setup_registered() };
     start_cheat_caller_address(kudos.contract_address, CALLER());
-    kudos.give_kudos(test_amount(), CREDENTIAL_HASH, CREDENTIAL_HASH_BAD, test_description());
+    kudos.give_kudos(CREDENTIAL_HASH, CREDENTIAL_HASH_BAD, test_description());
 }

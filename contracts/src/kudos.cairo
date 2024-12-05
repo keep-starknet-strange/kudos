@@ -4,7 +4,7 @@ pub mod Kudos {
     use kudos::credential_registry::{ICredentialRegistry, CredentialRegistryComponent};
     use kudos::oz16::IERC20ReadOnly;
     use kudos::oz16::erc20::{ERC20Component, ERC20HooksEmptyImpl, ERC20Component::InternalTrait};
-    use kudos::utils::constants::REGISTRATION_AMOUNT;
+    use kudos::utils::constants::{REGISTRATION_AMOUNT, ONE};
     use starknet::storage::{
         StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map
     };
@@ -50,7 +50,6 @@ pub mod Kudos {
         pub sender: ContractAddress,
         #[key]
         pub receiver: ContractAddress,
-        pub amount: u256,
         pub description: felt252,
     }
 
@@ -68,7 +67,6 @@ pub mod Kudos {
     impl Kudos of IKudos<ContractState> {
         fn give_kudos(
             ref self: ContractState,
-            amount: u256,
             sender_credentials: felt252,
             receiver_credentials: felt252,
             description: felt252,
@@ -79,15 +77,15 @@ pub mod Kudos {
             let receiver = self.credential_registry.get_credential_address(receiver_credentials);
             assert(self.credential_registry.is_registered(receiver), Errors::RECEIVER_UNREGISTERED);
 
-            self.erc20.transfer(receiver, amount);
+            self.erc20.transfer(receiver, ONE);
 
             let total_given = self.total_given.entry(sender).read();
-            self.total_given.entry(sender).write(total_given + amount);
+            self.total_given.entry(sender).write(total_given + ONE);
 
             let total_received = self.total_given.entry(receiver).read();
-            self.total_received.entry(receiver).write(total_received + amount);
+            self.total_received.entry(receiver).write(total_received + ONE);
 
-            self.emit(KudosGiven { sender, receiver, amount, description });
+            self.emit(KudosGiven { sender, receiver, description });
         }
 
         fn register_sw_employee(ref self: ContractState, credential_hash: felt252,) {
