@@ -42,8 +42,8 @@ pub fn setup_registered() -> ContractAddress {
     contract_address
 }
 
-pub fn test_amount() -> u256 {
-    ONE * 25
+pub fn one() -> u256 {
+    ONE * 1
 }
 
 pub fn test_description() -> felt252 {
