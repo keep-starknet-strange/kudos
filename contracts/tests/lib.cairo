@@ -92,9 +92,7 @@ fn test_give_kudos() {
 
     let expected_kudos_event = Kudos::Event::KudosGiven(
         Kudos::KudosGiven {
-            sender: CALLER(),
-            receiver: RECEIVER(),
-            description: test_description()
+            sender: CALLER(), receiver: RECEIVER(), description: test_description()
         }
     );
     spy.assert_emitted(@array![(kudos.contract_address, expected_kudos_event)]);
