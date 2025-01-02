@@ -4,11 +4,11 @@ pub mod Kudos {
     use kudos::credential_registry::{ICredentialRegistry, CredentialRegistryComponent};
     use kudos::oz16::IERC20ReadOnly;
     use kudos::oz16::erc20::{ERC20Component, ERC20HooksEmptyImpl, ERC20Component::InternalTrait};
-    use kudos::utils::constants::{REGISTRATION_AMOUNT, ONE};
+    use kudos::utils::constants::{REGISTRATION_AMOUNT, ONE, SECONDS_IN_30_DAYS, MONTHLT_MINT_AMOUNT};
     use starknet::storage::{
         StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map
     };
-    use starknet::{ContractAddress, get_caller_address};
+    use starknet::{ContractAddress, get_caller_address, get_block_timestamp};
 
     component!(
         path: CredentialRegistryComponent,
@@ -31,7 +31,9 @@ pub mod Kudos {
         #[substorage(v0)]
         erc20: ERC20Component::Storage,
         total_given: Map<ContractAddress, u256>,
-        total_received: Map<ContractAddress, u256>
+        total_received: Map<ContractAddress, u256>,
+        minted_balance: Map<ContractAddress, u256>,
+        last_mint_timestamp: Map<ContractAddress, u64>,
     }
 
     #[event]
@@ -56,6 +58,8 @@ pub mod Kudos {
     pub mod Errors {
         pub const SENDER_UNREGISTERED: felt252 = 'Sender not registered';
         pub const RECEIVER_UNREGISTERED: felt252 = 'Receiver not registered';
+        pub const MINTED_BALANCE_ZERO: felt252 = 'Minted balance is zero';
+        pub const MINTED_LESS_THAN_30_DAYS_AGO: felt252 = 'Minted less than 30 days ago';
     }
 
     #[constructor]
@@ -77,6 +81,9 @@ pub mod Kudos {
             let receiver = self.credential_registry.get_credential_address(receiver_credentials);
             assert(self.credential_registry.is_registered(receiver), Errors::RECEIVER_UNREGISTERED);
 
+            let minted_balance = self.minted_balance.entry(sender).read();
+            assert(minted_balance > 0, Errors::MINTED_BALANCE_ZERO);
+
             self.erc20.transfer(receiver, ONE);
 
             let total_given = self.total_given.entry(sender).read();
@@ -85,7 +92,21 @@ pub mod Kudos {
             let total_received = self.total_given.entry(receiver).read();
             self.total_received.entry(receiver).write(total_received + ONE);
 
+            self.minted_balance.entry(receiver).write(minted_balance - ONE);
+
             self.emit(KudosGiven { sender, receiver, description });
+        }
+
+        fn monthly_mint(ref self: ContractState, address: ContractAddress) {
+            let last_mint_timestamp = self.last_mint_timestamp.entry(address).read();
+            let current_timestamp = get_block_timestamp();
+
+            let time_since_last_mint = current_timestamp - last_mint_timestamp;
+            assert(time_since_last_mint > SECONDS_IN_30_DAYS , Errors::MINTED_LESS_THAN_30_DAYS_AGO);
+
+            self.erc20.mint(address, MONTHLT_MINT_AMOUNT);
+            self.last_mint_timestamp.entry(address).write(current_timestamp);
+
         }
 
         fn register_sw_employee(ref self: ContractState, credential_hash: felt252,) {
