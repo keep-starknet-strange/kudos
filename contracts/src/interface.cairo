@@ -12,4 +12,6 @@ pub trait IKudos<TState> {
     fn get_total_given(self: @TState, address: ContractAddress) -> u256;
     fn get_total_received(self: @TState, address: ContractAddress) -> u256;
     fn monthly_mint(ref self: TState, address: ContractAddress);
+    fn get_minted_balance(self: @TState, address: ContractAddress) -> u256;
+    fn get_last_mint_timestamp(self: @TState, address: ContractAddress) -> u64;
 }
