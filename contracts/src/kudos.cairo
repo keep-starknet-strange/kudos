@@ -104,7 +104,7 @@ pub mod Kudos {
 
         fn monthly_mint(ref self: ContractState) {
             let address = get_caller_address();
-            assert(self.credential_registry.is_registered(address), Errors::SENDER_UNREGISTERED);
+            assert(self.credential_registry.is_registered(address), Errors::MINTER_UNREGISTERED);
 
             let last_mint_timestamp = self.last_mint_timestamp.entry(address).read();
             let current_timestamp = get_block_timestamp();
@@ -115,6 +115,7 @@ pub mod Kudos {
             assert(amount_to_mint > 0, Errors::MINTED_AMOUNT_IS_ZERO);
 
             self.erc20.mint(address, amount_to_mint);
+            self.minted_balance.entry(address).write(MONTHLT_MINT_AMOUNT);
             self.last_mint_timestamp.entry(address).write(current_timestamp);
         }
 
