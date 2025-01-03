@@ -97,7 +97,7 @@ pub mod Kudos {
             let total_received = self.total_given.entry(receiver).read();
             self.total_received.entry(receiver).write(total_received + ONE);
 
-            self.minted_balance.entry(receiver).write(minted_balance - ONE);
+            self.minted_balance.entry(sender).write(minted_balance - ONE);
 
             self.emit(KudosGiven { sender, receiver, description });
         }

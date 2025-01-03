@@ -21,6 +21,7 @@ pub fn ZERO_ADDRESS() -> ContractAddress {
 //
 
 pub const DECIMALS: u8 = 18;
+pub const ZERO: u256 = 0;
 pub const ONE: u256 = 1_000_000_000_000_000_000;
 pub const FIVE: u256 = 5_000_000_000_000_000_000;
 pub const REGISTRATION_AMOUNT: u256 = FIVE;
