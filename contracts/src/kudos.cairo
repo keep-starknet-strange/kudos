@@ -62,6 +62,7 @@ pub mod Kudos {
         pub const RECEIVER_UNREGISTERED: felt252 = 'Receiver not registered';
         pub const MINTER_UNREGISTERED: felt252 = 'Minter not registered';
         pub const MINTED_BALANCE_ZERO: felt252 = 'Minted balance is zero';
+        pub const MINTED_BALANCE_IS_FULL: felt252 = 'Minted balance is full';
         pub const MINTED_AMOUNT_IS_ZERO: felt252 = 'Minted amount is zero';
         pub const MINTED_LESS_THAN_30_DAYS_AGO: felt252 = 'Minted less than 30 days ago';
     }
@@ -86,7 +87,6 @@ pub mod Kudos {
             assert(self.credential_registry.is_registered(receiver), Errors::RECEIVER_UNREGISTERED);
 
             let minted_balance = self.minted_balance.entry(sender).read();
-            println!("minted_balance: {}", minted_balance);
             assert(minted_balance > 0, Errors::MINTED_BALANCE_ZERO);
 
             self.erc20.transfer(receiver, ONE);
@@ -112,7 +112,7 @@ pub mod Kudos {
             assert(time_since_last_mint > SECONDS_IN_30_DAYS, Errors::MINTED_LESS_THAN_30_DAYS_AGO);
 
             let amount_to_mint = MONTHLT_MINT_AMOUNT - self.minted_balance.entry(address).read();
-            assert(amount_to_mint > 0, Errors::MINTED_AMOUNT_IS_ZERO);
+            assert(amount_to_mint > 0, Errors::MINTED_BALANCE_IS_FULL);
 
             self.erc20.mint(address, amount_to_mint);
             self.minted_balance.entry(address).write(MONTHLT_MINT_AMOUNT);

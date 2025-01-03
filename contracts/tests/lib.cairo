@@ -9,7 +9,10 @@ use kudos::utils::constants::{
     ZERO_ADDRESS, RECEIVER, DUMMY, CREDENTIAL_HASH_BAD, SECONDS_IN_30_DAYS, FIVE, ZERO
 };
 use kudos::{Kudos, IKudosDispatcher, IKudosDispatcherTrait};
-use snforge_std::{spy_events, EventSpyAssertionsTrait, start_cheat_caller_address, start_cheat_block_timestamp_global, stop_cheat_block_timestamp_global};
+use snforge_std::{
+    spy_events, EventSpyAssertionsTrait, start_cheat_caller_address,
+    start_cheat_block_timestamp_global, stop_cheat_block_timestamp_global
+};
 use starknet::get_block_timestamp;
 use utils::{setup, setup_registered, test_description, one, send_5_kudos};
 
@@ -128,15 +131,41 @@ fn test_give_kudos_minted_balance_zero() {
 #[test]
 fn test_monthly_mint_full_amount() {
     let kudos = IKudosDispatcher { contract_address: setup_registered() };
+
     start_cheat_caller_address(kudos.contract_address, CALLER());
     send_5_kudos(kudos);
+
     let thirty_days_pass = get_block_timestamp() + SECONDS_IN_30_DAYS + 1;
     start_cheat_block_timestamp_global(block_timestamp: thirty_days_pass);
     assert(kudos.get_minted_balance(CALLER()) == ZERO, 'Minted balance is not zero');
-    println!("minted balance before: {}", kudos.get_minted_balance(CALLER()));
+
     kudos.monthly_mint();
-println!("minted balance  after: {}", kudos.get_minted_balance(CALLER()));
+
     assert(kudos.get_minted_balance(CALLER()) == FIVE, 'Minted balance is not five');
 
     stop_cheat_block_timestamp_global()
+}
+
+#[test]
+#[should_panic(expected: 'Minted balance is full')]
+fn test_monthly_mint_with_a_full_balance() {
+    let kudos = IKudosDispatcher { contract_address: setup_registered() };
+
+    start_cheat_caller_address(kudos.contract_address, CALLER());
+
+    let thirty_days_pass = get_block_timestamp() + SECONDS_IN_30_DAYS + 1;
+    start_cheat_block_timestamp_global(block_timestamp: thirty_days_pass);
+    assert(kudos.get_minted_balance(CALLER()) == FIVE, 'Minted balance is not five');
+
+    kudos.monthly_mint();
+
+    stop_cheat_block_timestamp_global()
+}
+
+#[test]
+#[should_panic(expected: 'Minter not registered')]
+fn test_monthly_mint_minter_unregistered() {
+    let kudos = IKudosDispatcher { contract_address: setup_registered() };
+    start_cheat_caller_address(kudos.contract_address, DUMMY());
+    kudos.monthly_mint();
 }
