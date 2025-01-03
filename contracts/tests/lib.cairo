@@ -169,3 +169,15 @@ fn test_monthly_mint_minter_unregistered() {
     start_cheat_caller_address(kudos.contract_address, DUMMY());
     kudos.monthly_mint();
 }
+
+#[test]
+fn test_get_last_mint_timestamp() {
+    start_cheat_block_timestamp_global(block_timestamp: 42);
+    let kudos = IKudosDispatcher { contract_address: setup_registered() };
+    start_cheat_caller_address(kudos.contract_address, CALLER());
+
+    assert(kudos.get_last_mint_timestamp(CALLER()) == 42, 'Last mint time is incorrect');
+
+    stop_cheat_block_timestamp_global();
+}
+
