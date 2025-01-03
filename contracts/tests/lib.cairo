@@ -10,7 +10,7 @@ use kudos::utils::constants::{
 };
 use kudos::{Kudos, IKudosDispatcher, IKudosDispatcherTrait};
 use snforge_std::{spy_events, EventSpyAssertionsTrait, start_cheat_caller_address};
-use utils::{setup, setup_registered, test_description, one};
+use utils::{setup, setup_registered, test_description, one, send_5_kudos};
 
 #[test]
 fn test_erc20_metadata() {
@@ -112,4 +112,14 @@ fn test_give_kudos_receiver_unregistered() {
     let kudos = IKudosDispatcher { contract_address: setup_registered() };
     start_cheat_caller_address(kudos.contract_address, CALLER());
     kudos.give_kudos(CREDENTIAL_HASH, CREDENTIAL_HASH_BAD, test_description());
+}
+
+#[test]
+#[should_panic(expected: 'Minted balance is zero')]
+fn test_give_kudos_minted_balance_zero() {
+    let kudos = IKudosDispatcher { contract_address: setup_registered() };
+    start_cheat_caller_address(kudos.contract_address, CALLER());
+    send_5_kudos(kudos);
+
+    kudos.give_kudos(CREDENTIAL_HASH, CREDENTIAL_HASH_2, test_description());
 }

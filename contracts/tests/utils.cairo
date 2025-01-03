@@ -42,6 +42,14 @@ pub fn setup_registered() -> ContractAddress {
     contract_address
 }
 
+pub fn send_5_kudos(dispatcher: IKudosDispatcher) {
+    let mut counter: u32 = 0;
+    while counter < 5 {
+        dispatcher.give_kudos(CREDENTIAL_HASH, CREDENTIAL_HASH_2, test_description());
+        counter += 1;
+    }
+}
+
 pub fn one() -> u256 {
     ONE * 1
 }
